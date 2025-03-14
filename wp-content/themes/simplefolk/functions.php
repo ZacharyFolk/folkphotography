@@ -1,12 +1,20 @@
 <?php
 
+function simplefolk_theme_setup()
+{
+  load_theme_textdomain('simplefolk', get_template_directory() . '/languages');
+}
+add_action('after_setup_theme', 'simplefolk_theme_setup');
+
+
+
 ////////////////////////////////////////
 //                                    //
 //    Load them scripts and styles    //
 //                                    //
 ////////////////////////////////////////
 
-define('SIMPLE_THEME_VERSION', '0.6.1');
+define('SIMPLE_THEME_VERSION', '0.7.0');
 
 function main_scripts()
 {
@@ -20,6 +28,81 @@ function main_scripts()
 }
 
 add_action('wp_enqueue_scripts', 'main_scripts');
+
+
+/////////////////////////
+//                     //
+//    Theme support    //
+//                     //
+/////////////////////////
+
+
+function simplefolk_theme_support()
+{
+  // Add support for wide and full align images.
+  add_theme_support('align-wide');
+
+  // Add support for editor styles.
+  add_theme_support('editor-styles');
+
+  // Enqueue editor styles.
+  add_editor_style('style-editor.css');
+
+  // Add support for responsive embeds.
+  add_theme_support('responsive-embeds');
+
+  // Add support for custom line heights.
+  add_theme_support('custom-line-height');
+
+  // Add support for custom units.
+  add_theme_support('custom-units');
+
+  // Enables automatic <title> tag management
+  add_theme_support('title-tag');
+
+  // Enables featured images
+  add_theme_support('post-thumbnails');
+
+  // TODO: Are these deprecated ? 
+
+  add_theme_support('custom-logo');
+
+  add_theme_support('automatic-feed-links');
+  $args = array(
+    'script',
+    'style',
+    'search-form',
+    'comment-form',
+    'comment-list',
+    'gallery',
+    'caption',
+  );
+  add_theme_support('html5', $args);
+  add_theme_support('responsive-embeds');
+  add_theme_support('wp-block-styles');
+}
+
+add_action('after_setup_theme', 'simplefolk_theme_support');
+
+
+// Add WooCommerce support
+function simplefolk_add_woocommerce_support()
+{
+  add_theme_support('woocommerce');
+  //  add_theme_support('wc-product-gallery-zoom');
+  add_theme_support('wc-product-gallery-lightbox');
+  add_theme_support('wc-product-gallery-slider');
+}
+
+add_action('after_setup_theme', 'simplefolk_add_woocommerce_support');
+
+register_nav_menus(array(
+  'primary' => __('Main Menu', 'simplefolk'),
+  'side-nav-menu' => __('Side Menu', 'simplefolk'),
+  'social-link'  => __('Add Social Icons Only', 'simplefolk'),
+));
+
+
 
 // add_action('wp_enqueue_scripts', 'enqueue_woocommerce_scripts');
 // function enqueue_woocommerce_scripts()
@@ -63,7 +146,6 @@ function remove_gutenberg_block_library_css()
 }
 
 add_action('wp_enqueue_scripts', 'remove_gutenberg_block_library_css', 100);
-
 
 //////////////////////////////////////////
 //                                      //
@@ -125,6 +207,31 @@ if (!$menu_exists) {
     set_theme_mod('nav_menu_locations', $locations);
   }
 }
+
+
+
+///////////////////////////////////////////////
+//                                           //
+//    Pattern support                        //
+//                                           //
+///////////////////////////////////////////////
+
+// Featured Gallery Pattern
+
+function simplefolk_register_patterns()
+{
+  if (function_exists('register_block_pattern')) {
+    register_block_pattern(
+      'simplefolk/featured-gallery',
+      array(
+        'title'       => __('Featured Gallery', 'simplefolk'),
+        'categories'  => array('gallery'),
+        'content'     => file_get_contents(get_template_directory() . '/patterns/featured-gallery.php'),
+      )
+    );
+  }
+}
+add_action('init', 'simplefolk_register_patterns');
 
 
 ///////////////////////////////////////////
@@ -455,18 +562,20 @@ class project_thumbs_widget extends WP_Widget
     }
 
 ?>
-    <?php if ($cat) {
+<?php if ($cat) {
       featured_cat_card($cat);
     }
     ?>
-    <p>
-      <label for="<?php echo $this->get_field_id('title'); ?>"><?php __('Title:', 'simplefolk'); ?></label>
-      <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
-    </p>
-    <p>
-      <label for="<?php echo $this->get_field_id('cat'); ?>">
+<p>
+    <label for="<?php echo $this->get_field_id('title'); ?>"><?php __('Title:', 'simplefolk'); ?></label>
+    <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>"
+        name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
+</p>
+<p>
+    <label for="<?php echo $this->get_field_id('cat'); ?>">
         Select featured collection:
-        <select class="widefat" id="<?php echo $this->get_field_id('cat'); ?>" name="<?php echo $this->get_field_name('cat'); ?>" />
+        <select class="widefat" id="<?php echo $this->get_field_id('cat'); ?>"
+            name="<?php echo $this->get_field_name('cat'); ?>" />
         <?php
         echo '<option>' . __('No Category', 'simplefolk') . '</option>';
         $args = array('show_option_none' => 'No Category', 'hide_empty' => 0);
@@ -482,9 +591,9 @@ class project_thumbs_widget extends WP_Widget
           echo '<option value="' . $category->term_id . '" ' . $selected . '>' . $category->name . '</option>';
         endforeach; ?>
         </select>
-      </label>
-    </p>
-  <?php
+    </label>
+</p>
+<?php
   }
   public function update($new_instance, $old_instance)
   {
@@ -573,18 +682,20 @@ class tag_thumbs_widget extends WP_Widget
     }
 
   ?>
-    <?php if ($tag) {
+<?php if ($tag) {
       featured_tag_card($tag);
     }
     ?>
-    <p>
-      <label for="<?php echo $this->get_field_id('title'); ?>"><?php __('Title:', 'simplefolk'); ?></label>
-      <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
-    </p>
-    <p>
-      <label for="<?php echo $this->get_field_id('tag'); ?>">
+<p>
+    <label for="<?php echo $this->get_field_id('title'); ?>"><?php __('Title:', 'simplefolk'); ?></label>
+    <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>"
+        name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
+</p>
+<p>
+    <label for="<?php echo $this->get_field_id('tag'); ?>">
         Select featured tag:
-        <select class="widefat" id="<?php echo $this->get_field_id('tag'); ?>" name="<?php echo $this->get_field_name('tag'); ?>" />
+        <select class="widefat" id="<?php echo $this->get_field_id('tag'); ?>"
+            name="<?php echo $this->get_field_name('tag'); ?>" />
         <?php
         echo '<option>' . __('No Category', 'simplefolk') . '</option>';
         $args = array('show_option_none' => 'No Category', 'hide_empty' => 0);
@@ -603,9 +714,9 @@ class tag_thumbs_widget extends WP_Widget
           echo '<option value="' . $t->term_id . '" ' . $selected . '>' . $t->name . '</option>';
         endforeach; ?>
         </select>
-      </label>
-    </p>
-  <?php
+    </label>
+</p>
+<?php
   }
   public function update($new_instance, $old_instance)
   {
@@ -736,11 +847,12 @@ class collections_carousel_widget extends WP_Widget
 
     // Input field for entering the widget title
   ?>
-    <p>
-      <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
-      <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
-    </p>
-  <?php
+<p>
+    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
+    <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>"
+        name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+</p>
+<?php
   }
 
   public function update($new_instance, $old_instance)
@@ -814,47 +926,6 @@ function wut($var, $exit = false)
   }
 }
 
-/////////////////////////
-//                     //
-//    Theme support    //
-//                     //
-/////////////////////////
-
-
-add_theme_support('custom-logo');
-add_theme_support('post-thumbnails');
-add_theme_support('align-wide');
-add_theme_support('title-tag');
-add_theme_support('automatic-feed-links');
-$args = array(
-  'script',
-  'style',
-  'search-form',
-  'comment-form',
-  'comment-list',
-  'gallery',
-  'caption',
-);
-add_theme_support('html5', $args);
-add_theme_support('responsive-embeds');
-add_theme_support('wp-block-styles');
-
-// Add WooCommerce support
-function simplefolk_add_woocommerce_support()
-{
-  add_theme_support('woocommerce');
-  //  add_theme_support('wc-product-gallery-zoom');
-  add_theme_support('wc-product-gallery-lightbox');
-  add_theme_support('wc-product-gallery-slider');
-}
-
-add_action('after_setup_theme', 'simplefolk_add_woocommerce_support');
-
-register_nav_menus(array(
-  'primary' => __('Main Menu', 'simplefolk'),
-  'side-nav-menu' => __('Side Menu', 'simplefolk'),
-  'social-link'  => __('Add Social Icons Only', 'simplefolk'),
-));
 
 ///////////////////////////
 //                       //
@@ -906,16 +977,16 @@ function get_site_info()
   // todo
   $show_title   = (true === get_theme_mod('display_title_and_tagline', true));
   ?>
-  <?php if ($blog_info) : ?>
-    <?php if (is_front_page() && !is_paged()) : ?>
-      <h1 class="site-title"><?php echo esc_html($blog_info); ?></h1>
-    <?php elseif (is_front_page() && !is_home()) : ?>
-      <h1 class="site-title"><a href="<?php echo esc_url(home_url('/')); ?>"><?php echo esc_html($blog_info); ?></a>
-      </h1>
-    <?php else : ?>
-      <h1 class="site-title"><a href="<?php echo esc_url(home_url('/')); ?>"><?php echo esc_html($blog_info); ?></a></h1>
-    <?php endif; ?>
-    <?php endif;
+<?php if ($blog_info) : ?>
+<?php if (is_front_page() && !is_paged()) : ?>
+<h1 class="site-title"><?php echo esc_html($blog_info); ?></h1>
+<?php elseif (is_front_page() && !is_home()) : ?>
+<h1 class="site-title"><a href="<?php echo esc_url(home_url('/')); ?>"><?php echo esc_html($blog_info); ?></a>
+</h1>
+<?php else : ?>
+<h1 class="site-title"><a href="<?php echo esc_url(home_url('/')); ?>"><?php echo esc_html($blog_info); ?></a></h1>
+<?php endif; ?>
+<?php endif;
 }
 
 // TODO : Connect with customizer options and add description
@@ -1393,10 +1464,10 @@ function get_gallery_by_tag($post_tag)
         $image_id = get_post_thumbnail_id();
         $image_caption =  wp_get_attachment_caption($image_id);
     ?>
-        <a data-fancybox="gallery" data-caption="<?php echo $image_caption; ?>" href="<?php the_post_thumbnail_url(); ?>">
-          <?php get_img_with_sizes('thumbnail'); ?>
-        </a>
-    <?php endif;
+<a data-fancybox="gallery" data-caption="<?php echo $image_caption; ?>" href="<?php the_post_thumbnail_url(); ?>">
+    <?php get_img_with_sizes('thumbnail'); ?>
+</a>
+<?php endif;
     endwhile;
     echo '</div>';
   endif;
@@ -1540,8 +1611,9 @@ function get_img_with_sizes($size)
 
   if ($image_attributes) :
     ?>
-    <img src="<?php echo $image_attributes[0]; ?>" width="<?php echo $image_attributes[1]; ?>" height="<?php echo $image_attributes[2]; ?>" alt="<?php echo $image_alt ?>" />
-  <?php endif;
+<img src="<?php echo $image_attributes[0]; ?>" width="<?php echo $image_attributes[1]; ?>"
+    height="<?php echo $image_attributes[2]; ?>" alt="<?php echo $image_alt ?>" />
+<?php endif;
 };
 
 
@@ -1830,67 +1902,78 @@ function photo_meta_callback($post)
   // error_log("Final Meta Data: " . print_r($meta_data, true));
 
   ?>
-  <p>
+<p>
     <label for="camera">Camera : </label>
-    <input id="camera" type="text" name="camera" style="margin-right: 10px; width: 100%" value="<?php echo esc_attr($meta_data['camera']); ?>" />
-  </p>
-  <p>
+    <input id="camera" type="text" name="camera" style="margin-right: 10px; width: 100%"
+        value="<?php echo esc_attr($meta_data['camera']); ?>" />
+</p>
+<p>
     <label for="iso">ISO : </label>
-    <input id="iso" type="text" name="iso" style="margin-right: 10px; width:100%; text-align: center;" value="<?php echo esc_attr($meta_data['iso']); ?>" />
-  </p>
-  <p>
+    <input id="iso" type="text" name="iso" style="margin-right: 10px; width:100%; text-align: center;"
+        value="<?php echo esc_attr($meta_data['iso']); ?>" />
+</p>
+<p>
     <label for="aperture">Aperture : </label>
-    <input id="aperture" type="text" name="aperture" style="margin-right: 10px; width:100%; text-align: center;" value="<?php echo esc_attr($meta_data['aperture']); ?>" />
-  </p>
-  <p>
+    <input id="aperture" type="text" name="aperture" style="margin-right: 10px; width:100%; text-align: center;"
+        value="<?php echo esc_attr($meta_data['aperture']); ?>" />
+</p>
+<p>
     <label for="shutter">Shutter Speed : </label>
-    <input id="shutter" type="text" name="shutter" style="margin-right: 10px; width:100%; text-align: center;" value="<?php echo esc_attr($meta_data['shutter']); ?>" />
-  </p>
-  <p>
+    <input id="shutter" type="text" name="shutter" style="margin-right: 10px; width:100%; text-align: center;"
+        value="<?php echo esc_attr($meta_data['shutter']); ?>" />
+</p>
+<p>
     <label for="focal">Focal Length : </label>
-    <input id="focal" type="text" name="focal" style="margin-right: 10px; width:100%; text-align: center;" value="<?php echo esc_attr($meta_data['focal']); ?>" />
-  </p>
-  <p>
+    <input id="focal" type="text" name="focal" style="margin-right: 10px; width:100%; text-align: center;"
+        value="<?php echo esc_attr($meta_data['focal']); ?>" />
+</p>
+<p>
     <label for="time">Date Taken : </label>
-    <input id="time" type="text" name="time" style="margin-right: 10px; width:100%; text-align: center;" value="<?php echo esc_attr($meta_data['time']); ?>" />
-  </p>
-  <p>
+    <input id="time" type="text" name="time" style="margin-right: 10px; width:100%; text-align: center;"
+        value="<?php echo esc_attr($meta_data['time']); ?>" />
+</p>
+<p>
     <label for="film">Film Type : </label>
-    <input id="film" type="text" name="film" style="margin-right: 10px; width:100%; text-align: center;" value="<?php echo esc_attr($meta_data['film']); ?>" />
-  </p>
-  <p>
+    <input id="film" type="text" name="film" style="margin-right: 10px; width:100%; text-align: center;"
+        value="<?php echo esc_attr($meta_data['film']); ?>" />
+</p>
+<p>
     <label for="location">Location : </label>
-    <input id="location" type="text" name="location" style="margin-right: 10px; width:100%; text-align: center;" value="<?php echo esc_attr($meta_data['location']); ?>" />
-  </p>
-  <p>
+    <input id="location" type="text" name="location" style="margin-right: 10px; width:100%; text-align: center;"
+        value="<?php echo esc_attr($meta_data['location']); ?>" />
+</p>
+<p>
     <label for="print_available">Print Available : </label>
-    <input id="print_available" type="checkbox" name="print_available" <?php checked($meta_data['print_available'], 'on'); ?> />
-  </p>
-  <p>
+    <input id="print_available" type="checkbox" name="print_available"
+        <?php checked($meta_data['print_available'], 'on'); ?> />
+</p>
+<p>
     <label for="featured_image">Featured Image : </label>
-    <input id="featured_image" type="checkbox" name="featured_image" <?php checked($meta_data['featured_image'], 'on'); ?> />
-  </p>
-  <?php
+    <input id="featured_image" type="checkbox" name="featured_image"
+        <?php checked($meta_data['featured_image'], 'on'); ?> />
+</p>
+<?php
 
   if (class_exists('WooCommerce')) {
 
     $products = wc_get_products(array('limit' => -1));
   ?>
-    <p>
-      <label for="make_product">Make Product : </label>
-      <input id="make_product" type="checkbox" name="make_product" <?php checked($meta_data['make_product'], 'on'); ?> />
-    </p>
-    <p>
-      <label for="product_template">Product Template : </label>
-      <select id="product_template" name="product_template" style="width: 100%">
+<p>
+    <label for="make_product">Make Product : </label>
+    <input id="make_product" type="checkbox" name="make_product" <?php checked($meta_data['make_product'], 'on'); ?> />
+</p>
+<p>
+    <label for="product_template">Product Template : </label>
+    <select id="product_template" name="product_template" style="width: 100%">
         <option value="">Select a template</option>
         <?php foreach ($products as $product) : ?>
-          <option value="<?php echo $product->get_id(); ?>" <?php selected($meta_data['product_template'], $product->get_id()); ?>><?php echo $product->get_name(); ?>
-          </option>
+        <option value="<?php echo $product->get_id(); ?>"
+            <?php selected($meta_data['product_template'], $product->get_id()); ?>><?php echo $product->get_name(); ?>
+        </option>
         <?php endforeach; ?>
-      </select>
-    </p>
-  <?php
+    </select>
+</p>
+<?php
   }
 }
 
@@ -1928,9 +2011,18 @@ function simple_save_meta($post_id)
   }
 
   $textfields = [
-    'camera', 'iso', 'aperture', 'shutter', 'focal',
-    'film', 'time', 'location', 'print_available',
-    'featured_image', 'make_product', 'product_template'
+    'camera',
+    'iso',
+    'aperture',
+    'shutter',
+    'focal',
+    'film',
+    'time',
+    'location',
+    'print_available',
+    'featured_image',
+    'make_product',
+    'product_template'
   ];
 
   foreach ($textfields as $field) {
@@ -2290,28 +2382,28 @@ function custom_comment($comment, $args, $depth)
 {
   $GLOBALS['comment'] = $comment;
   ?>
-  <li <?php comment_class(); ?> id="comment-<?php comment_ID(); ?>">
+<li <?php comment_class(); ?> id="comment-<?php comment_ID(); ?>">
     <article id="div-comment-<?php comment_ID(); ?>" class="comment-body">
-      <footer class="comment-meta">
-        <div class="comment-author-avatar">
-          <?php echo get_avatar($comment, 64); ?>
+        <footer class="comment-meta">
+            <div class="comment-author-avatar">
+                <?php echo get_avatar($comment, 64); ?>
+            </div>
+            <div class="comment-author vcard">
+                <?php echo get_comment_author_link() ?>
+            </div>
+            <div class="comment-metadata">
+                <?php printf('<time datetime="%1$s">%2$s</time>', get_comment_time('c'), sprintf(__('%1$s at %2$s', 'simplefolk'), get_comment_date(), get_comment_time())); ?>
+                <span class="comment-permalink">
+                    <a href="<?php echo esc_url(get_comment_link($comment->comment_ID)); ?>" title="Comment link">Link
+                    </a>
+                </span>
+                <?php edit_comment_link(__('Edit', 'simplefolk'), '<span class="edit-link">', '</span>'); ?>
+            </div>
+        </footer>
+        <div class="comment-content">
+            <?php comment_text(); ?>
         </div>
-        <div class="comment-author vcard">
-          <?php echo get_comment_author_link() ?>
-        </div>
-        <div class="comment-metadata">
-          <?php printf('<time datetime="%1$s">%2$s</time>', get_comment_time('c'), sprintf(__('%1$s at %2$s', 'simplefolk'), get_comment_date(), get_comment_time())); ?>
-          <span class="comment-permalink">
-            <a href="<?php echo esc_url(get_comment_link($comment->comment_ID)); ?>" title="Comment link">Link
-            </a>
-          </span>
-          <?php edit_comment_link(__('Edit', 'simplefolk'), '<span class="edit-link">', '</span>'); ?>
-        </div>
-      </footer>
-      <div class="comment-content">
-        <?php comment_text(); ?>
-      </div>
-      <?php
+        <?php
       comment_reply_link(array_merge($args, array(
         'depth' => $depth,
         'max_depth' => $args['max_depth'],
@@ -2392,71 +2484,71 @@ function custom_comment($comment, $args, $depth)
       $color = "#1c1c1c";
 
     ?>
-      <script type="text/javascript">
-        // DOM Loaded
-        document.addEventListener('DOMContentLoaded', function() {
+    <script type="text/javascript">
+    // DOM Loaded
+    document.addEventListener('DOMContentLoaded', function() {
 
-          // Get Variation Pricing Data
-          var variations_form = document.querySelector('form.variations_form');
-          var data = variations_form.getAttribute('data-product_variations');
-          data = JSON.parse(data);
+        // Get Variation Pricing Data
+        var variations_form = document.querySelector('form.variations_form');
+        var data = variations_form.getAttribute('data-product_variations');
+        data = JSON.parse(data);
 
-          // Loop Drop Downs
-          document.querySelectorAll('table.variations select')
+        // Loop Drop Downs
+        document.querySelectorAll('table.variations select')
             .forEach(function(select) {
 
-              // Loop Drop Down Options
-              select.querySelectorAll('option')
-                .forEach(function(option) {
+                // Loop Drop Down Options
+                select.querySelectorAll('option')
+                    .forEach(function(option) {
 
-                  // Skip Empty
-                  if (!option.value) {
-                    return;
-                  }
+                        // Skip Empty
+                        if (!option.value) {
+                            return;
+                        }
 
-                  // Get Pricing For This Option
-                  var pricing = '';
-                  data.forEach(function(row) {
-                    if (row.attributes[select.name] == option.value) {
-                      pricing = row.price_html;
-                    }
-                  });
+                        // Get Pricing For This Option
+                        var pricing = '';
+                        data.forEach(function(row) {
+                            if (row.attributes[select.name] == option.value) {
+                                pricing = row.price_html;
+                            }
+                        });
 
-                  var span = document.createElement('span');
+                        var span = document.createElement('span');
 
-                  // Create Radio
-                  var radio = document.createElement('input');
-                  radio.type = 'radio';
-                  radio.name = select.name;
-                  radio.value = option.value;
-                  radio.checked = option.selected;
-                  radio.setAttribute('id', option.value);
-                  var label = document.createElement('label');
-                  label.htmlFor = option.value;
-                  label.appendChild(document.createTextNode(' ' + option.text + ' '));
+                        // Create Radio
+                        var radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = select.name;
+                        radio.value = option.value;
+                        radio.checked = option.selected;
+                        radio.setAttribute('id', option.value);
+                        var label = document.createElement('label');
+                        label.htmlFor = option.value;
+                        label.appendChild(document.createTextNode(' ' + option.text + ' '));
 
-                  span.appendChild(radio);
-                  span.appendChild(label);
+                        span.appendChild(radio);
+                        span.appendChild(label);
 
 
-                  // Insert Radio
-                  select.closest('td').appendChild(span);
+                        // Insert Radio
+                        select.closest('td').appendChild(span);
 
-                  // Handle Clicking
-                  radio.addEventListener('click', function(event) {
-                    select.value = radio.value;
-                    jQuery(select).trigger('change');
-                  });
+                        // Handle Clicking
+                        radio.addEventListener('click', function(event) {
+                            select.value = radio.value;
+                            jQuery(select).trigger('change');
+                        });
 
-                }); // End Drop Down Options Loop
+                    }); // End Drop Down Options Loop
 
-              // Hide Drop Down
-              select.style.display = 'none';
+                // Hide Drop Down
+                select.style.display = 'none';
 
             }); // End Drop Downs Loop
 
-        }); // End Document Loaded
-      </script>
+    }); // End Document Loaded
+    </script>
 
     <?php
     });
@@ -2477,7 +2569,7 @@ function custom_comment($comment, $args, $depth)
     ?>
     <?php the_content();
     ?>
-  <?php
+    <?php
   }
 
 
@@ -2549,8 +2641,10 @@ function custom_comment($comment, $args, $depth)
 
     ob_start();
   ?>
-    <form class="variations_form cart" method="post" enctype="multipart/form-data" data-product_id="<?php echo esc_attr($product->get_id()); ?>" data-product_variations="<?php echo htmlspecialchars(json_encode($product->get_available_variations())); ?>">
-      <?php
+    <form class="variations_form cart" method="post" enctype="multipart/form-data"
+        data-product_id="<?php echo esc_attr($product->get_id()); ?>"
+        data-product_variations="<?php echo htmlspecialchars(json_encode($product->get_available_variations())); ?>">
+        <?php
       $attributes = $product->get_variation_attributes();
       $selected_attributes = $product->get_default_attributes();
 
@@ -2559,16 +2653,16 @@ function custom_comment($comment, $args, $depth)
       } else {
       ?>
         <table class="variations" cellspacing="0">
-          <tbody>
-            <?php foreach ($attributes as $attribute_name => $options) : ?>
-              <tr>
-                <td class="label">
-                  <label for="<?php echo esc_attr(sanitize_title($attribute_name)); ?>">
-                    <?php echo wc_attribute_label($attribute_name); ?>
-                  </label>
-                </td>
-                <td class="value">
-                  <?php
+            <tbody>
+                <?php foreach ($attributes as $attribute_name => $options) : ?>
+                <tr>
+                    <td class="label">
+                        <label for="<?php echo esc_attr(sanitize_title($attribute_name)); ?>">
+                            <?php echo wc_attribute_label($attribute_name); ?>
+                        </label>
+                    </td>
+                    <td class="value">
+                        <?php
                   wc_dropdown_variation_attribute_options(array(
                     'options' => $options,
                     'attribute' => $attribute_name,
@@ -2577,16 +2671,16 @@ function custom_comment($comment, $args, $depth)
                   ));
                   echo '<a class="reset_variations" href="#">' . esc_html__('Clear', 'woocommerce') . '</a>';
                   ?>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-          </tbody>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
         </table>
         <?php
         do_action('woocommerce_before_add_to_cart_button');
         ?>
         <div class="single_variation_wrap">
-          <?php
+            <?php
           do_action('woocommerce_before_single_variation');
           do_action('woocommerce_single_variation');
           do_action('woocommerce_after_single_variation');
@@ -2595,9 +2689,9 @@ function custom_comment($comment, $args, $depth)
         <?php
         do_action('woocommerce_after_add_to_cart_button');
         ?>
-      <?php } ?>
+        <?php } ?>
     </form>
-  <?php
+    <?php
     return ob_get_clean();
   }
   add_shortcode('custom_variation_add_to_cart', 'custom_product_variation_add_to_cart');

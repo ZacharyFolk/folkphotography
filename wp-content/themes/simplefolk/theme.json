@@ -1,0 +1,18 @@
+{
+    "version": 0.0,
+    "settings": {
+        "color": {
+            "palette": [
+                { "slug": "primary", "color": "#000000", "name": "Black" },
+                { "slug": "secondary", "color": "#FFFFFF", "name": "White" }
+            ]
+        },
+        "typography": {
+            "fontSizes": [
+                { "slug": "small", "size": "12px", "name": "Small" },
+                { "slug": "regular", "size": "16px", "name": "Regular" },
+                { "slug": "large", "size": "36px", "name": "Large" }
+            ]
+        }
+    }
+}
