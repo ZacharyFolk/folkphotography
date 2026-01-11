@@ -37,7 +37,6 @@ wp-mail.php
 wp-settings.php
 wp-signup.php
 wp-trackback.php
-index.php
 !wp-content/themes/simplefolk/index.php
 wp-blog-header.php
 wp-load.php
