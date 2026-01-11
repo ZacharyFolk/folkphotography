@@ -19,7 +19,71 @@ function iwh_location_meta_box_callback($post)
     $lat = get_post_meta($post->ID, '_iwh_lat', true) ?: '';
     $lng = get_post_meta($post->ID, '_iwh_lng', true) ?: '';
     $place_name = get_post_meta($post->ID, '_iwh_place_name', true) ?: '';
+
+    // Get camera data
+    $iso = get_post_meta($post->ID, '_iwh_iso', true);
+    $aperture = get_post_meta($post->ID, '_iwh_aperture', true);
+    $shutter_speed = get_post_meta($post->ID, '_iwh_shutter_speed', true);
+    $focal_length = get_post_meta($post->ID, '_iwh_focal_length', true);
+    $camera_make = get_post_meta($post->ID, '_iwh_camera_make', true);
+    $camera_model = get_post_meta($post->ID, '_iwh_camera_model', true);
+    $lens = get_post_meta($post->ID, '_iwh_lens', true);
+    $date_taken = get_post_meta($post->ID, '_iwh_date_taken', true);
 ?>
+
+<!-- Camera Data Section -->
+<?php if ($iso || $aperture || $shutter_speed || $focal_length): ?>
+<div style="background: #f0f0f1; padding: 10px; margin-bottom: 15px; border-radius: 3px;">
+    <h4 style="margin-top: 0;">Camera Settings</h4>
+    <table style="width: 100%; font-size: 12px;">
+        <?php if ($camera_make || $camera_model): ?>
+        <tr>
+            <td style="padding: 3px 0;"><strong>Camera:</strong></td>
+            <td><?php echo esc_html(trim($camera_make . ' ' . $camera_model)); ?></td>
+        </tr>
+        <?php endif; ?>
+        <?php if ($lens): ?>
+        <tr>
+            <td style="padding: 3px 0;"><strong>Lens:</strong></td>
+            <td><?php echo esc_html($lens); ?></td>
+        </tr>
+        <?php endif; ?>
+        <?php if ($iso): ?>
+        <tr>
+            <td style="padding: 3px 0; width: 35%;"><strong>ISO:</strong></td>
+            <td><?php echo esc_html($iso); ?></td>
+        </tr>
+        <?php endif; ?>
+        <?php if ($aperture): ?>
+        <tr>
+            <td style="padding: 3px 0;"><strong>Aperture:</strong></td>
+            <td>ƒ/<?php echo esc_html($aperture); ?></td>
+        </tr>
+        <?php endif; ?>
+        <?php if ($shutter_speed): ?>
+        <tr>
+            <td style="padding: 3px 0;"><strong>Shutter Speed:</strong></td>
+            <td><?php echo esc_html($shutter_speed); ?>s</td>
+        </tr>
+        <?php endif; ?>
+        <?php if ($focal_length): ?>
+        <tr>
+            <td style="padding: 3px 0;"><strong>Focal Length:</strong></td>
+            <td><?php echo esc_html($focal_length); ?>mm</td>
+        </tr>
+        <?php endif; ?>
+        <?php if ($date_taken): ?>
+        <tr>
+            <td style="padding: 3px 0;"><strong>Date Taken:</strong></td>
+            <td><?php echo esc_html($date_taken); ?></td>
+        </tr>
+        <?php endif; ?>
+    </table>
+</div>
+<?php endif; ?>
+
+<!-- Location Section -->
+<h4>Location</h4>
 <label for="iwh-location-search">Search location:</label>
 <input type="text" id="iwh-location-search" placeholder="Enter city or place" style="width:100%" />
 <button type="button" id="iwh-search-button" class="button">Search</button>

@@ -1,0 +1,63 @@
+<?php get_header(); ?>
+
+<main class="site-content">
+    <div class="content-wrapper">
+        <?php
+        while (have_posts()) :
+            the_post();
+        ?>
+            <article id="post-<?php the_ID(); ?>" <?php post_class('post-content'); ?>>
+                <header class="entry-header">
+                    <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
+
+                    <div class="entry-meta">
+                        <span class="posted-on">
+                            <?php echo get_the_date(); ?>
+                        </span>
+                        <span class="byline">
+                            by <?php the_author(); ?>
+                        </span>
+                        <?php if (has_category()) : ?>
+                            <span class="categories">
+                                <?php the_category(', '); ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                </header>
+
+                <?php if (has_post_thumbnail()) : ?>
+                    <div class="featured-image">
+                        <?php the_post_thumbnail('large'); ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="entry-content">
+                    <?php the_content(); ?>
+                </div>
+
+                <?php if (has_tag()) : ?>
+                    <footer class="entry-footer">
+                        <div class="tags">
+                            <?php the_tags('<span class="tags-label">Tags: </span>', ', '); ?>
+                        </div>
+                    </footer>
+                <?php endif; ?>
+            </article>
+
+            <?php
+            // Post navigation
+            the_post_navigation(array(
+                'prev_text' => '<span class="nav-subtitle">' . __('Previous:', 'folkphotography') . '</span> <span class="nav-title">%title</span>',
+                'next_text' => '<span class="nav-subtitle">' . __('Next:', 'folkphotography') . '</span> <span class="nav-title">%title</span>',
+            ));
+
+            // Comments
+            if (comments_open() || get_comments_number()) :
+                comments_template();
+            endif;
+            ?>
+        <?php endwhile; ?>
+    </div>
+</main>
+
+<?php get_footer(); ?>
