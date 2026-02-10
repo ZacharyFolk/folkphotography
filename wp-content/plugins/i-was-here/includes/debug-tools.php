@@ -60,7 +60,26 @@ class IWH_Debug_Tools
             if (! $file) continue;
 
             iwh_log('Rescanning attachment', $a->ID);
-            IWH_Exif_Reader::read($file);
+            $exif = IWH_Exif_Reader::read($file);
+
+            // If EXIF data was returned, attempt to backfill attachment meta.
+            if (is_array($exif)) {
+                // Mark whether this attachment has any EXIF data.
+                update_post_meta($a->ID, '_iwh_has_exif', ! empty($exif));
+
+                // Common EXIF fields used by the plugin (if available in the reader output).
+                if (isset($exif['iso'])) {
+                    update_post_meta($a->ID, '_iwh_iso', $exif['iso']);
+                }
+
+                if (isset($exif['lat'])) {
+                    update_post_meta($a->ID, '_iwh_lat', $exif['lat']);
+                }
+
+                if (isset($exif['lng'])) {
+                    update_post_meta($a->ID, '_iwh_lng', $exif['lng']);
+                }
+            }
         }
 
         iwh_log('Bulk EXIF rescan complete');
