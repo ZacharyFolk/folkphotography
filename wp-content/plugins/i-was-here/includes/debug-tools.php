@@ -27,7 +27,7 @@ class IWH_Debug_Tools
 <div class="wrap">
     <h1>i-was-here – Debug</h1>
 
-    <form method="post" action="/localfolk/wp-admin/admin-post.php">
+    <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
         <input type="hidden" name="action" value="iwh_rescan_exif">
         <?php wp_nonce_field('iwh_rescan_exif'); ?>
         <?php submit_button('Rescan EXIF for existing attachments'); ?>

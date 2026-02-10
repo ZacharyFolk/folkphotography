@@ -248,11 +248,11 @@ class FolkPhoto_Location_Map_Widget extends WP_Widget
             'posts_per_page' => -1,
             'meta_query' => array(
                 array(
-                    'key' => '_iwh_latitude',
+                    'key' => '_iwh_lat',
                     'compare' => 'EXISTS'
                 ),
                 array(
-                    'key' => '_iwh_longitude',
+                    'key' => '_iwh_lng',
                     'compare' => 'EXISTS'
                 )
             )
@@ -308,19 +308,54 @@ class FolkPhoto_Location_Map_Widget extends WP_Widget
                     maxZoom: 18
                 }).addTo(map);
                 
-                var markers = <?php echo json_encode($markers); ?>;
+                var markers = <?php echo wp_json_encode($markers); ?>;
                 var bounds = [];
                 
                 markers.forEach(function(marker) {
-                    var popup = '<div class="map-popup">' +
-                        '<img src="' + marker.image + '" alt="' + marker.title + '" style="width:100%; max-width:200px; display:block; margin-bottom:10px;">' +
-                        '<strong>' + marker.title + '</strong><br>' +
-                        '<a href="' + marker.full_image + '" class="glightbox" data-gallery="map-images">View Full Size</a> | ' +
-                        '<a href="' + marker.post_url + '">View Post</a>' +
-                        '</div>';
+                    // Build popup content using DOM APIs to avoid HTML injection
+                    var popupEl = document.createElement('div');
+                    popupEl.className = 'map-popup';
+
+                    if (marker.image) {
+                        var imgEl = document.createElement('img');
+                        imgEl.setAttribute('src', marker.image);
+                        imgEl.setAttribute('alt', marker.title || '');
+                        imgEl.style.width = '100%';
+                        imgEl.style.maxWidth = '200px';
+                        imgEl.style.display = 'block';
+                        imgEl.style.marginBottom = '10px';
+                        popupEl.appendChild(imgEl);
+                    }
+
+                    if (marker.title) {
+                        var titleEl = document.createElement('strong');
+                        titleEl.textContent = marker.title;
+                        popupEl.appendChild(titleEl);
+                        popupEl.appendChild(document.createElement('br'));
+                    }
+
+                    if (marker.full_image) {
+                        var fullLink = document.createElement('a');
+                        fullLink.setAttribute('href', marker.full_image);
+                        fullLink.className = 'glightbox';
+                        fullLink.setAttribute('data-gallery', 'map-images');
+                        fullLink.textContent = 'View Full Size';
+                        popupEl.appendChild(fullLink);
+                    }
+
+                    if (marker.full_image && marker.post_url) {
+                        popupEl.appendChild(document.createTextNode(' | '));
+                    }
+
+                    if (marker.post_url) {
+                        var postLink = document.createElement('a');
+                        postLink.setAttribute('href', marker.post_url);
+                        postLink.textContent = 'View Post';
+                        popupEl.appendChild(postLink);
+                    }
                     
                     var mapMarker = L.marker([marker.lat, marker.lng]).addTo(map)
-                        .bindPopup(popup);
+                        .bindPopup(popupEl);
                     
                     bounds.push([marker.lat, marker.lng]);
                 });
