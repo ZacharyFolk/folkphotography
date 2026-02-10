@@ -1192,3 +1192,325 @@ body::before {
         padding: 30px 0;
     }
 }
+
+/**********[ #CAMERA STATS WIDGET ]**********/
+
+.camera-stats-widget {
+    display: grid;
+    gap: 2rem;
+    padding: 2rem;
+    background: var(--grey-darker);
+    border-radius: 4px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    background: var(--grey-dark);
+    border-radius: 4px;
+    border-left: 3px solid var(--accent-primary);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateX(5px);
+    border-left-color: var(--accent-hover);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--grey-lighter);
+    font-weight: 400;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--white-bright);
+    font-family: var(--font-headings);
+    line-height: 1.2;
+}
+
+.stat-detail {
+    font-size: 0.9rem;
+    color: var(--grey-light);
+    margin-top: 0.25rem;
+}
+
+/* Responsive stats widget */
+@media (max-width: 768px) {
+    .camera-stats-widget {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .stat-item {
+        padding: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+}
+
+/**********[ #LOCATION MAP WIDGET ]**********/
+
+.folkphoto-location-map {
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--grey-dark);
+}
+
+/* Leaflet popup customization */
+.leaflet-popup-content-wrapper {
+    background: var(--grey-darkest);
+    color: var(--white-dim);
+    border-radius: 4px;
+}
+
+.leaflet-popup-content {
+    margin: 1rem;
+}
+
+.map-popup {
+    text-align: center;
+}
+
+.map-popup img {
+    border-radius: 4px;
+    margin: 0 auto 10px;
+}
+
+.map-popup strong {
+    color: var(--white-bright);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.map-popup a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.map-popup a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.leaflet-popup-tip {
+    background: var(--grey-darkest);
+}
+
+/* Leaflet controls dark theme */
+.leaflet-control-zoom a {
+    background: var(--grey-dark);
+    color: var(--white-bright);
+    border-color: var(--grey-medium);
+}
+
+.leaflet-control-zoom a:hover {
+    background: var(--grey-medium);
+}
+
+.leaflet-control-attribution {
+    background: rgba(26, 26, 26, 0.8);
+    color: var(--grey-lighter);
+}
+
+.leaflet-control-attribution a {
+    color: var(--accent-primary);
+}
+
+/**********[ #MASONRY GALLERY TEMPLATE ]**********/
+
+.masonry-gallery-page .page-intro {
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    text-align: center;
+    color: var(--grey-lighter);
+}
+
+/* Filters */
+.masonry-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin: 3rem 0;
+    padding: 2rem;
+    background: var(--grey-darker);
+    border-radius: 4px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    color: var(--grey-lighter);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    background: var(--grey-dark);
+    color: var(--white-dim);
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.filter-btn:hover {
+    background: var(--grey-medium);
+    color: var(--white-bright);
+}
+
+.filter-btn.active {
+    background: var(--accent-primary);
+    color: var(--black-pure);
+    border-color: var(--accent-primary);
+}
+
+/* Masonry Grid */
+.masonry-grid {
+    margin: 3rem 0;
+    position: relative;
+    width: 100%;
+}
+
+.masonry-item {
+    overflow: hidden;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+}
+
+.masonry-item:hover {
+    transform: translateY(-2px);
+    z-index: 10;
+}
+
+.masonry-link {
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.masonry-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.masonry-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Masonry Overlay */
+.masonry-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    padding: 2rem 1.5rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.masonry-item:hover .masonry-overlay {
+    transform: translateY(0);
+}
+
+.masonry-title {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--white-bright);
+}
+
+.masonry-type {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--grey-lighter);
+    opacity: 0.8;
+}
+
+/* EXIF Data in Lightbox */
+.exif-data {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--grey-dark);
+    font-size: 0.9rem;
+}
+
+.exif-data p {
+    margin: 0.5rem 0;
+    color: var(--grey-lighter);
+}
+
+.exif-data strong {
+    color: var(--white-bright);
+}
+
+/* No Results */
+.no-results {
+    text-align: center;
+    padding: 4rem 0;
+    font-size: 1.2rem;
+    color: var(--grey-lighter);
+}
+
+/* Responsive Masonry */
+@media (max-width: 1024px) {
+    .masonry-filters {
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .filter-group {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .masonry-filters {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .masonry-overlay {
+        transform: translateY(0);
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+    }
+
+    .masonry-title {
+        font-size: 1rem;
+    }
+
+    .masonry-grid {
+        margin: 2rem 0;
+    }
+}

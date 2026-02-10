@@ -216,11 +216,386 @@ class FolkPhoto_Category_Gallery_Widget extends WP_Widget
 }
 
 /**
+ * Location Map Widget
+ */
+class FolkPhoto_Location_Map_Widget extends WP_Widget
+{
+    public function __construct()
+    {
+        parent::__construct(
+            'folkphoto_location_map',
+            __('Photo Location Map', 'folkphotography'),
+            array('description' => __('Display an interactive map showing photo locations from GPS data', 'folkphotography'))
+        );
+    }
+
+    public function widget($args, $instance)
+    {
+        echo $args['before_widget'];
+
+        if (!empty($instance['title'])) {
+            echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
+        }
+
+        $height = !empty($instance['height']) ? absint($instance['height']) : 500;
+        $category = !empty($instance['category']) ? absint($instance['category']) : 0;
+
+        // Get all images with GPS data
+        $args_query = array(
+            'post_type' => 'attachment',
+            'post_mime_type' => 'image',
+            'post_status' => 'inherit',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                    'key' => '_iwh_latitude',
+                    'compare' => 'EXISTS'
+                ),
+                array(
+                    'key' => '_iwh_longitude',
+                    'compare' => 'EXISTS'
+                )
+            )
+        );
+
+        // Add category filter if selected
+        if ($category) {
+            $args_query['tax_query'] = array(
+                array(
+                    'taxonomy' => 'category',
+                    'field' => 'term_id',
+                    'terms' => $category,
+                )
+            );
+        }
+
+        $images = get_posts($args_query);
+
+        if (!empty($images)) :
+            // Generate unique ID for this map
+            $map_id = 'map-' . uniqid();
+            
+            // Prepare markers data
+            $markers = array();
+            foreach ($images as $image) {
+                $lat = get_post_meta($image->ID, '_iwh_latitude', true);
+                $lng = get_post_meta($image->ID, '_iwh_longitude', true);
+                
+                if ($lat && $lng) {
+                    $markers[] = array(
+                        'lat' => floatval($lat),
+                        'lng' => floatval($lng),
+                        'title' => get_the_title($image->ID),
+                        'image' => wp_get_attachment_image_url($image->ID, 'thumbnail'),
+                        'full_image' => wp_get_attachment_image_url($image->ID, 'large'),
+                        'post_url' => get_attachment_link($image->ID)
+                    );
+                }
+            }
+            ?>
+            <div id="<?php echo esc_attr($map_id); ?>" class="folkphoto-location-map" style="height: <?php echo esc_attr($height); ?>px; width: 100%;"></div>
+            <script>
+            (function() {
+                if (typeof L === 'undefined') {
+                    console.error('Leaflet not loaded');
+                    return;
+                }
+                
+                var map = L.map('<?php echo esc_js($map_id); ?>').setView([20, 0], 2);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 18
+                }).addTo(map);
+                
+                var markers = <?php echo json_encode($markers); ?>;
+                var bounds = [];
+                
+                markers.forEach(function(marker) {
+                    var popup = '<div class="map-popup">' +
+                        '<img src="' + marker.image + '" alt="' + marker.title + '" style="width:100%; max-width:200px; display:block; margin-bottom:10px;">' +
+                        '<strong>' + marker.title + '</strong><br>' +
+                        '<a href="' + marker.full_image + '" class="glightbox" data-gallery="map-images">View Full Size</a> | ' +
+                        '<a href="' + marker.post_url + '">View Post</a>' +
+                        '</div>';
+                    
+                    var mapMarker = L.marker([marker.lat, marker.lng]).addTo(map)
+                        .bindPopup(popup);
+                    
+                    bounds.push([marker.lat, marker.lng]);
+                });
+                
+                // Fit map to show all markers
+                if (bounds.length > 0) {
+                    map.fitBounds(bounds, {padding: [50, 50]});
+                }
+                
+                // Reinitialize GLightbox for map popups
+                if (typeof GLightbox !== 'undefined') {
+                    setTimeout(function() {
+                        GLightbox({selector: '.map-popup .glightbox'});
+                    }, 500);
+                }
+            })();
+            </script>
+            <?php
+        else:
+            echo '<p>' . __('No photos with GPS data found.', 'folkphotography') . '</p>';
+        endif;
+
+        echo $args['after_widget'];
+    }
+
+    public function form($instance)
+    {
+        $title = !empty($instance['title']) ? $instance['title'] : __('Photo Locations', 'folkphotography');
+        $height = !empty($instance['height']) ? absint($instance['height']) : 500;
+        $category = !empty($instance['category']) ? absint($instance['category']) : 0;
+
+        $categories = get_categories(array('hide_empty' => false));
+        ?>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php _e('Title:', 'folkphotography'); ?></label>
+            <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>"
+                name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text"
+                value="<?php echo esc_attr($title); ?>">
+        </p>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('height')); ?>"><?php _e('Map Height (px):', 'folkphotography'); ?></label>
+            <input class="small-text" id="<?php echo esc_attr($this->get_field_id('height')); ?>"
+                name="<?php echo esc_attr($this->get_field_name('height')); ?>" type="number" step="50" min="300"
+                value="<?php echo esc_attr($height); ?>">
+        </p>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('category')); ?>"><?php _e('Filter by Category (optional):', 'folkphotography'); ?></label>
+            <select class="widefat" id="<?php echo esc_attr($this->get_field_id('category')); ?>"
+                name="<?php echo esc_attr($this->get_field_name('category')); ?>">
+                <option value="0"><?php _e('All Categories', 'folkphotography'); ?></option>
+                <?php foreach ($categories as $cat) : ?>
+                    <option value="<?php echo esc_attr($cat->term_id); ?>" <?php selected($category, $cat->term_id); ?>>
+                        <?php echo esc_html($cat->name); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+        <?php
+    }
+
+    public function update($new_instance, $old_instance)
+    {
+        $instance = array();
+        $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+        $instance['height'] = (!empty($new_instance['height'])) ? absint($new_instance['height']) : 500;
+        $instance['category'] = (!empty($new_instance['category'])) ? absint($new_instance['category']) : 0;
+        return $instance;
+    }
+}
+
+/**
+ * Camera Stats Widget
+ */
+class FolkPhoto_Camera_Stats_Widget extends WP_Widget
+{
+    public function __construct()
+    {
+        parent::__construct(
+            'folkphoto_camera_stats',
+            __('Camera & Photography Stats', 'folkphotography'),
+            array('description' => __('Display photography statistics from EXIF data', 'folkphotography'))
+        );
+    }
+
+    public function widget($args, $instance)
+    {
+        echo $args['before_widget'];
+
+        if (!empty($instance['title'])) {
+            echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
+        }
+
+        // Get all stats from images with EXIF data
+        $stats = $this->get_camera_stats();
+
+        if (!empty($stats)) :
+            ?>
+            <div class="camera-stats-widget">
+                <?php if (!empty($stats['total_photos'])) : ?>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Photos</span>
+                        <span class="stat-value"><?php echo esc_html(number_format($stats['total_photos'])); ?></span>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($stats['favorite_camera'])) : ?>
+                    <div class="stat-item">
+                        <span class="stat-label">Favorite Camera</span>
+                        <span class="stat-value"><?php echo esc_html($stats['favorite_camera']); ?></span>
+                        <?php if (!empty($stats['camera_count'])) : ?>
+                            <span class="stat-detail"><?php echo esc_html($stats['camera_count']); ?> photos</span>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($stats['favorite_lens'])) : ?>
+                    <div class="stat-item">
+                        <span class="stat-label">Favorite Lens</span>
+                        <span class="stat-value"><?php echo esc_html($stats['favorite_lens']); ?></span>
+                        <?php if (!empty($stats['lens_count'])) : ?>
+                            <span class="stat-detail"><?php echo esc_html($stats['lens_count']); ?> photos</span>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($stats['favorite_aperture'])) : ?>
+                    <div class="stat-item">
+                        <span class="stat-label">Favorite Aperture</span>
+                        <span class="stat-value">f/<?php echo esc_html($stats['favorite_aperture']); ?></span>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($stats['favorite_iso'])) : ?>
+                    <div class="stat-item">
+                        <span class="stat-label">Most Used ISO</span>
+                        <span class="stat-value">ISO <?php echo esc_html($stats['favorite_iso']); ?></span>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($stats['locations_count'])) : ?>
+                    <div class="stat-item">
+                        <span class="stat-label">Shooting Locations</span>
+                        <span class="stat-value"><?php echo esc_html($stats['locations_count']); ?> places</span>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <?php
+        else:
+            echo '<p>' . __('No camera data available yet. Upload photos with EXIF data!', 'folkphotography') . '</p>';
+        endif;
+
+        echo $args['after_widget'];
+    }
+
+    private function get_camera_stats()
+    {
+        global $wpdb;
+        $stats = array();
+
+        // Total photos with EXIF
+        $total = $wpdb->get_var(
+            "SELECT COUNT(DISTINCT post_id) 
+             FROM {$wpdb->postmeta} 
+             WHERE meta_key = '_iwh_camera_make' 
+             AND meta_value != ''"
+        );
+        $stats['total_photos'] = $total;
+
+        // Favorite camera (most used)
+        $camera = $wpdb->get_row(
+            "SELECT meta_value, COUNT(*) as count 
+             FROM {$wpdb->postmeta} 
+             WHERE meta_key = '_iwh_camera_model' 
+             AND meta_value != '' 
+             GROUP BY meta_value 
+             ORDER BY count DESC 
+             LIMIT 1"
+        );
+        if ($camera) {
+            $stats['favorite_camera'] = $camera->meta_value;
+            $stats['camera_count'] = $camera->count;
+        }
+
+        // Favorite lens
+        $lens = $wpdb->get_row(
+            "SELECT meta_value, COUNT(*) as count 
+             FROM {$wpdb->postmeta} 
+             WHERE meta_key = '_iwh_lens' 
+             AND meta_value != '' 
+             GROUP BY meta_value 
+             ORDER BY count DESC 
+             LIMIT 1"
+        );
+        if ($lens) {
+            $stats['favorite_lens'] = $lens->meta_value;
+            $stats['lens_count'] = $lens->count;
+        }
+
+        // Favorite aperture
+        $aperture = $wpdb->get_var(
+            "SELECT meta_value 
+             FROM {$wpdb->postmeta} 
+             WHERE meta_key = '_iwh_aperture' 
+             AND meta_value != '' 
+             GROUP BY meta_value 
+             ORDER BY COUNT(*) DESC 
+             LIMIT 1"
+        );
+        if ($aperture) {
+            $stats['favorite_aperture'] = $aperture;
+        }
+
+        // Most used ISO
+        $iso = $wpdb->get_var(
+            "SELECT meta_value 
+             FROM {$wpdb->postmeta} 
+             WHERE meta_key = '_iwh_iso' 
+             AND meta_value != '' 
+             GROUP BY meta_value 
+             ORDER BY COUNT(*) DESC 
+             LIMIT 1"
+        );
+        if ($iso) {
+            $stats['favorite_iso'] = $iso;
+        }
+
+        // Count of unique locations (photos with GPS)
+        $locations = $wpdb->get_var(
+            "SELECT COUNT(DISTINCT CONCAT(lat.meta_value, ',', lng.meta_value)) 
+             FROM {$wpdb->postmeta} lat
+             INNER JOIN {$wpdb->postmeta} lng ON lat.post_id = lng.post_id
+             WHERE lat.meta_key = '_iwh_latitude' 
+             AND lng.meta_key = '_iwh_longitude'
+             AND lat.meta_value != '' 
+             AND lng.meta_value != ''"
+        );
+        if ($locations) {
+            $stats['locations_count'] = $locations;
+        }
+
+        return $stats;
+    }
+
+    public function form($instance)
+    {
+        $title = !empty($instance['title']) ? $instance['title'] : __('By The Numbers', 'folkphotography');
+        ?>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php _e('Title:', 'folkphotography'); ?></label>
+            <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>"
+                name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text"
+                value="<?php echo esc_attr($title); ?>">
+        </p>
+        <p class="description">
+            <?php _e('This widget automatically displays statistics from your photo EXIF data. No configuration needed!', 'folkphotography'); ?>
+        </p>
+        <?php
+    }
+
+    public function update($new_instance, $old_instance)
+    {
+        $instance = array();
+        $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+        return $instance;
+    }
+}
+
+/**
  * Register Widgets
  */
 function folkphotography_register_widgets()
 {
     register_widget('FolkPhoto_Recent_Portfolio_Widget');
     register_widget('FolkPhoto_Category_Gallery_Widget');
+    register_widget('FolkPhoto_Location_Map_Widget');
+    register_widget('FolkPhoto_Camera_Stats_Widget');
 }
 add_action('widgets_init', 'folkphotography_register_widgets');

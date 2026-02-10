@@ -103,6 +103,14 @@ function folkphotography_scripts()
         null
     );
 
+    // Leaflet CSS (for maps)
+    wp_enqueue_style(
+        'leaflet',
+        'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+        array(),
+        '1.9.4'
+    );
+
     // GLightbox CSS
     wp_enqueue_style(
         'glightbox',
@@ -113,6 +121,15 @@ function folkphotography_scripts()
 
     // Main stylesheet
     wp_enqueue_style('folkphotography-style', get_stylesheet_uri(), array(), FOLKPHOTO_VERSION);
+
+    // Leaflet JS (for maps)
+    wp_enqueue_script(
+        'leaflet',
+        'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+        array(),
+        '1.9.4',
+        true
+    );
 
     // GLightbox JS
     wp_enqueue_script(
