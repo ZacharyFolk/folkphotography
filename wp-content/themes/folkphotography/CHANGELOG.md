@@ -37,7 +37,10 @@
 - Leaflet.js 1.9.4 (CSS + JS) for interactive maps
 
 ### 📝 Documentation
-- NEW-FEATURES.md - Complete guide to new features
+- **NEW-FEATURES.md** - Complete guide to new features
+- **WORKFLOW-GUIDE.md** - Daily productivity system & anti-overwhelm method ⭐
+- **IMAGE-METADATA-GUIDE.md** - DxO/Photoshop EXIF preservation guide ⭐
+- **DOCUMENTATION-INDEX.md** - Complete documentation overview ⭐
 - Widget usage instructions
 - Template customization guide
 - Troubleshooting section
@@ -68,7 +71,10 @@
 
 **New Files Added:**
 - `/page-templates/masonry-gallery.php`
-- `/NEW-FEATURES.md`
+- `NEW-FEATURES.md`
+- `WORKFLOW-GUIDE.md` ⭐
+- `IMAGE-METADATA-GUIDE.md` ⭐
+- `DOCUMENTATION-INDEX.md` ⭐
 - `CHANGELOG.md` (this file)
 
 **Modified Files:**
