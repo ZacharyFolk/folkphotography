@@ -15,13 +15,41 @@ document.addEventListener('DOMContentLoaded', function () {
     pins.forEach((pin) => {
         const marker = L.marker([pin.lat, pin.lng]).addTo(map)
 
-        let popup = `<strong>${pin.title}</strong>`
-        if (pin.thumb) {
-            popup += `<br><img src="${pin.thumb}" style="max-width:150px; margin-top:5px;" />`
-        }
-        popup += `<br><a href="${pin.link}">View</a>`
+        const popupContainer = document.createElement('div')
 
-        marker.bindPopup(popup)
+        const titleEl = document.createElement('strong')
+        titleEl.textContent = pin.title || ''
+        popupContainer.appendChild(titleEl)
+
+        if (pin.thumb) {
+            popupContainer.appendChild(document.createElement('br'))
+
+            const imgEl = document.createElement('img')
+            imgEl.src = pin.thumb
+            imgEl.style.maxWidth = '150px'
+            imgEl.style.marginTop = '5px'
+            popupContainer.appendChild(imgEl)
+        }
+
+        popupContainer.appendChild(document.createElement('br'))
+
+        const linkEl = document.createElement('a')
+        linkEl.textContent = 'View'
+
+        if (typeof pin.link === 'string') {
+            try {
+                const url = new URL(pin.link, window.location.origin)
+                if (url.protocol === 'http:' || url.protocol === 'https:') {
+                    linkEl.href = url.toString()
+                }
+            } catch (e) {
+                // If the URL is invalid, omit href to avoid unsafe navigation.
+            }
+        }
+
+        popupContainer.appendChild(linkEl)
+
+        marker.bindPopup(popupContainer)
         bounds.push([pin.lat, pin.lng])
     })
 
