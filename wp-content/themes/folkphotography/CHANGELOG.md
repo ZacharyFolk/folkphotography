@@ -1,5 +1,35 @@
 # FolkPhotography Theme - Changelog
 
+## Version 1.1.1 - February 2026
+
+### 🔧 Bug Fixes
+
+**Critical Issues from Code Review:**
+
+1. **Fixed: Attachment Category Registration**
+   - Added `register_taxonomy_for_object_type('category', 'attachment')`
+   - Added `register_taxonomy_for_object_type('post_tag', 'attachment')`
+   - Hero image category selector now works
+   - Location Map widget category filter now works
+   - Category Gallery widget now works
+   - Users can now assign categories to images in Media Library
+
+2. **Fixed: JavaScript Null Pointer Exception**
+   - Added null guards to `closeMobileMenu()` function
+   - Added null guards to `toggleMobileMenu()` function
+   - Prevents errors when header markup is missing
+   - Graceful degradation on all page types
+
+3. **Improved: Code Quality**
+   - All queries properly sanitized and escaped
+   - Performance optimizations (passive event listeners)
+   - Better error handling throughout
+
+### 📝 Documentation
+- **CODE-REVIEW-FIXES.md** - Complete documentation of all fixes
+
+---
+
 ## Version 1.1.0 - February 2026
 
 ### ✨ New Features

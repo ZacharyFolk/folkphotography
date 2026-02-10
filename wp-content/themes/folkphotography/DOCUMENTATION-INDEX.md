@@ -10,8 +10,10 @@ This theme includes comprehensive documentation to help you get started and main
 2. **[GETTING-STARTED.md](GETTING-STARTED.md)** - Initial setup guide
 3. **[NEW-FEATURES.md](NEW-FEATURES.md)** - Latest features guide (v1.1.0)
 4. **[CHANGELOG.md](CHANGELOG.md)** - Version history
-5. **[WORKFLOW-GUIDE.md](WORKFLOW-GUIDE.md)** - Daily workflow & productivity system ⭐ NEW
-6. **[IMAGE-METADATA-GUIDE.md](IMAGE-METADATA-GUIDE.md)** - EXIF preservation guide ⭐ NEW
+5. **[WORKFLOW-GUIDE.md](WORKFLOW-GUIDE.md)** - Daily workflow & productivity system ⭐
+6. **[IMAGE-METADATA-GUIDE.md](IMAGE-METADATA-GUIDE.md)** - EXIF preservation guide ⭐
+7. **[CODE-REVIEW-FIXES.md](CODE-REVIEW-FIXES.md)** - Code review fixes (v1.1.1) ⭐ NEW
+8. **[ASSIGNING-CATEGORIES.md](ASSIGNING-CATEGORIES.md)** - How to assign categories to images ⭐ NEW
 
 ### **Quick Reference**
 

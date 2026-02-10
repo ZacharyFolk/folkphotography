@@ -1,6 +1,6 @@
 <?php
 
-define('FOLKPHOTO_VERSION', '1.1.0');
+define('FOLKPHOTO_VERSION', '1.1.1');
 
 /**
  * Theme setup
@@ -39,6 +39,11 @@ function folkphotography_setup()
     add_image_size('portfolio-large', 1200, 1200, false);
     add_image_size('portfolio-medium', 800, 800, false);
     add_image_size('gallery-thumb', 400, 400, true);
+    
+    // Register category taxonomy for attachments
+    // This allows filtering hero images and gallery widgets by category
+    register_taxonomy_for_object_type('category', 'attachment');
+    register_taxonomy_for_object_type('post_tag', 'attachment');
 }
 add_action('after_setup_theme', 'folkphotography_setup');
 

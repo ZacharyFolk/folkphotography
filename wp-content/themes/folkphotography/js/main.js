@@ -94,17 +94,21 @@
      * Mobile menu toggle
      */
     function toggleMobileMenu() {
-        if (mainNav) {
-            mainNav.classList.toggle('active');
-            menuToggle.classList.toggle('active');
-        }
+        // Guard against null elements
+        if (!mainNav || !menuToggle) return;
+        
+        mainNav.classList.toggle('active');
+        menuToggle.classList.toggle('active');
     }
 
     /**
      * Close mobile menu when clicking outside
      */
     function closeMobileMenu(event) {
-        if (mainNav && mainNav.classList.contains('active')) {
+        // Guard against null menuToggle or mainNav
+        if (!mainNav || !menuToggle) return;
+        
+        if (mainNav.classList.contains('active')) {
             if (!mainNav.contains(event.target) && !menuToggle.contains(event.target)) {
                 mainNav.classList.remove('active');
                 menuToggle.classList.remove('active');
