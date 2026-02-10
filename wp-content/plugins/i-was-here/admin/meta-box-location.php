@@ -16,6 +16,9 @@ add_action('add_meta_boxes', function () {
 // Meta box HTML
 function iwh_location_meta_box_callback($post)
 {
+    // Add nonce field for security
+    wp_nonce_field('iwh_location_meta_box', 'iwh_location_meta_box_nonce');
+    
     $lat = get_post_meta($post->ID, '_iwh_lat', true) ?: '';
     $lng = get_post_meta($post->ID, '_iwh_lng', true) ?: '';
     $place_name = get_post_meta($post->ID, '_iwh_place_name', true) ?: '';
@@ -127,9 +130,56 @@ add_action('admin_enqueue_scripts', function ($hook) {
     ]);
 });
 
-// Save meta
+// Save meta with security checks
 add_action('edit_attachment', function ($post_id) {
-    if (isset($_POST['_iwh_lat'])) update_post_meta($post_id, '_iwh_lat', sanitize_text_field($_POST['_iwh_lat']));
-    if (isset($_POST['_iwh_lng'])) update_post_meta($post_id, '_iwh_lng', sanitize_text_field($_POST['_iwh_lng']));
-    if (isset($_POST['_iwh_place_name'])) update_post_meta($post_id, '_iwh_place_name', sanitize_text_field($_POST['_iwh_place_name']));
+    // Verify nonce
+    if (!isset($_POST['iwh_location_meta_box_nonce'])) {
+        return;
+    }
+    
+    if (!wp_verify_nonce($_POST['iwh_location_meta_box_nonce'], 'iwh_location_meta_box')) {
+        return;
+    }
+    
+    // Check if this is an autosave
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    // Check user permissions
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    // Save latitude
+    if (isset($_POST['_iwh_lat'])) {
+        $lat = sanitize_text_field($_POST['_iwh_lat']);
+        // Validate latitude is a number between -90 and 90
+        if (is_numeric($lat) && $lat >= -90 && $lat <= 90) {
+            update_post_meta($post_id, '_iwh_lat', $lat);
+        } elseif (empty($lat)) {
+            delete_post_meta($post_id, '_iwh_lat');
+        }
+    }
+    
+    // Save longitude
+    if (isset($_POST['_iwh_lng'])) {
+        $lng = sanitize_text_field($_POST['_iwh_lng']);
+        // Validate longitude is a number between -180 and 180
+        if (is_numeric($lng) && $lng >= -180 && $lng <= 180) {
+            update_post_meta($post_id, '_iwh_lng', $lng);
+        } elseif (empty($lng)) {
+            delete_post_meta($post_id, '_iwh_lng');
+        }
+    }
+    
+    // Save place name
+    if (isset($_POST['_iwh_place_name'])) {
+        $place_name = sanitize_text_field($_POST['_iwh_place_name']);
+        if (!empty($place_name)) {
+            update_post_meta($post_id, '_iwh_place_name', $place_name);
+        } else {
+            delete_post_meta($post_id, '_iwh_place_name');
+        }
+    }
 });
