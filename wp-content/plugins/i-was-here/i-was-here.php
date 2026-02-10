@@ -15,8 +15,17 @@ if (! defined('ABSPATH')) exit;
 
 define('IWH_VERSION', '0.2.0');
 define('IWH_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('IWH_LOG_ENABLED', true);
 
+// Logging is disabled by default unless WP_DEBUG is explicitly enabled.
+$iwh_log_default_enabled = (defined('WP_DEBUG') && WP_DEBUG);
+if (! defined('IWH_LOG_ENABLED')) {
+    define(
+        'IWH_LOG_ENABLED',
+        function_exists('apply_filters')
+            ? (bool) apply_filters('iwh_log_enabled', $iwh_log_default_enabled)
+            : $iwh_log_default_enabled
+    );
+}
 // --------------------------------------------------
 // INCLUDES
 // --------------------------------------------------
