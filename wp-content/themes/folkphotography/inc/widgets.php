@@ -240,12 +240,15 @@ class FolkPhoto_Location_Map_Widget extends WP_Widget
         $height = !empty($instance['height']) ? absint($instance['height']) : 500;
         $category = !empty($instance['category']) ? absint($instance['category']) : 0;
 
-        // Get all images with GPS data
+        // Determine maximum number of images to load for the map (filterable).
+        $max_markers = apply_filters('folkphoto_location_map_posts_per_page', 500);
+
+        // Get images with GPS data (limited for performance).
         $args_query = array(
             'post_type' => 'attachment',
             'post_mime_type' => 'image',
             'post_status' => 'inherit',
-            'posts_per_page' => -1,
+            'posts_per_page' => $max_markers,
             'meta_query' => array(
                 array(
                     'key' => '_iwh_lat',
