@@ -248,11 +248,11 @@ class FolkPhoto_Location_Map_Widget extends WP_Widget
             'posts_per_page' => -1,
             'meta_query' => array(
                 array(
-                    'key' => '_iwh_latitude',
+                    'key' => '_iwh_lat',
                     'compare' => 'EXISTS'
                 ),
                 array(
-                    'key' => '_iwh_longitude',
+                    'key' => '_iwh_lng',
                     'compare' => 'EXISTS'
                 )
             )
