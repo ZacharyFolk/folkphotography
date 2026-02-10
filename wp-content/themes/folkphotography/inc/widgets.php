@@ -278,8 +278,8 @@ class FolkPhoto_Location_Map_Widget extends WP_Widget
             // Prepare markers data
             $markers = array();
             foreach ($images as $image) {
-                $lat = get_post_meta($image->ID, '_iwh_latitude', true);
-                $lng = get_post_meta($image->ID, '_iwh_longitude', true);
+                $lat = get_post_meta($image->ID, '_iwh_lat', true);
+                $lng = get_post_meta($image->ID, '_iwh_lng', true);
                 
                 if ($lat && $lng) {
                     $markers[] = array(
