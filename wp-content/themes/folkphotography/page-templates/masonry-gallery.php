@@ -109,7 +109,7 @@ get_header();
                                 <!-- Hidden description for lightbox -->
                                 <div class="glightbox-desc glightbox-desc-<?php the_ID(); ?>" style="display:none;">
                                     <?php if (has_excerpt()) : ?>
-                                        <p><?php echo get_the_excerpt(); ?></p>
+                                        <p><?php echo wp_kses_post( get_the_excerpt() ); ?></p>
                                     <?php endif; ?>
                                     <?php
                                     // Show EXIF data if available
