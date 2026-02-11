@@ -1,5 +1,31 @@
 # FolkPhotography Theme - Changelog
 
+## Version 1.1.3 - February 2026
+
+### 🐛 Critical Bug Fix
+
+**Masonry Gallery - Category Filter Broken for Portfolio**
+
+**Issue:** The Masonry Gallery template used `cat` query parameter which only filters the built-in `category` taxonomy (for posts), but NOT `portfolio_category` (for portfolio CPT). In mixed views, the category filter didn't work correctly.
+
+**Fixed in:** `page-templates/masonry-gallery.php`
+
+**What Changed:**
+- Portfolio-only view: Now uses `tax_query` with `portfolio_category`
+- Posts-only view: Still uses `cat` (works as before)
+- Mixed view: Uses `tax_query` with OR relation to match either taxonomy
+- Filter UI: Now shows correct categories based on selected post type
+
+**Impact:**
+- ✅ Category filter works in portfolio-only view
+- ✅ Category filter works in posts-only view
+- ✅ Category filter works in mixed view (matches either taxonomy)
+- ✅ Filter buttons show relevant categories for selected type
+
+**Credit:** Code review feedback
+
+---
+
 ## Version 1.1.2 - February 2026
 
 ### 🐛 Critical Bug Fix

@@ -1,6 +1,6 @@
 <?php
 
-define('FOLKPHOTO_VERSION', '1.1.2');
+define('FOLKPHOTO_VERSION', '1.1.3');
 
 /**
  * Theme setup

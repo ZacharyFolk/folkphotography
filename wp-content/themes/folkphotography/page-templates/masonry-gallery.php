@@ -44,8 +44,36 @@ get_header();
             }
             
             // Add category filter if specified
+            // Use tax_query to support both 'category' (posts) and 'portfolio_category' (portfolio)
             if ($category_id) {
-                $query_args['cat'] = $category_id;
+                if ($portfolio_type === 'portfolio') {
+                    // Portfolio only: use portfolio_category
+                    $query_args['tax_query'] = array(
+                        array(
+                            'taxonomy' => 'portfolio_category',
+                            'field' => 'term_id',
+                            'terms' => $category_id,
+                        )
+                    );
+                } elseif ($portfolio_type === 'posts') {
+                    // Posts only: use category
+                    $query_args['cat'] = $category_id;
+                } else {
+                    // Mixed view: use OR relation to match either taxonomy
+                    $query_args['tax_query'] = array(
+                        'relation' => 'OR',
+                        array(
+                            'taxonomy' => 'category',
+                            'field' => 'term_id',
+                            'terms' => $category_id,
+                        ),
+                        array(
+                            'taxonomy' => 'portfolio_category',
+                            'field' => 'term_id',
+                            'terms' => $category_id,
+                        )
+                    );
+                }
             }
             
             // Query posts
@@ -71,8 +99,47 @@ get_header();
                 </div>
                 
                 <?php
-                $categories = get_categories(array('hide_empty' => true));
-                if ($categories) :
+                // Get categories based on selected post type
+                $filter_terms = array();
+                
+                if ($portfolio_type === 'portfolio') {
+                    // Show portfolio categories only
+                    $filter_terms = get_terms(array(
+                        'taxonomy' => 'portfolio_category',
+                        'hide_empty' => true,
+                    ));
+                } elseif ($portfolio_type === 'posts') {
+                    // Show regular categories only
+                    $filter_terms = get_categories(array('hide_empty' => true));
+                } else {
+                    // Show both - merge categories and portfolio categories
+                    $post_cats = get_categories(array('hide_empty' => true));
+                    $portfolio_cats = get_terms(array(
+                        'taxonomy' => 'portfolio_category',
+                        'hide_empty' => true,
+                    ));
+                    
+                    // For mixed view, we need to show unique category names
+                    // Note: This assumes categories and portfolio_categories share similar names
+                    // In mixed mode, filtering by ID works for the matched taxonomy
+                    $all_terms = array_merge(
+                        is_array($post_cats) ? $post_cats : array(),
+                        is_array($portfolio_cats) ? $portfolio_cats : array()
+                    );
+                    
+                    // Remove duplicates by name
+                    $unique_terms = array();
+                    $seen_names = array();
+                    foreach ($all_terms as $term) {
+                        if (!in_array($term->name, $seen_names)) {
+                            $unique_terms[] = $term;
+                            $seen_names[] = $term->name;
+                        }
+                    }
+                    $filter_terms = $unique_terms;
+                }
+                
+                if (!empty($filter_terms) && !is_wp_error($filter_terms)) :
                 ?>
                 <div class="filter-group">
                     <label>Category:</label>
@@ -80,10 +147,10 @@ get_header();
                        class="filter-btn <?php echo ($category_id === 0) ? 'active' : ''; ?>">
                         All
                     </a>
-                    <?php foreach ($categories as $cat) : ?>
-                        <a href="<?php echo esc_url(add_query_arg('cat', $cat->term_id)); ?>" 
-                           class="filter-btn <?php echo ($category_id === $cat->term_id) ? 'active' : ''; ?>">
-                            <?php echo esc_html($cat->name); ?>
+                    <?php foreach ($filter_terms as $term) : ?>
+                        <a href="<?php echo esc_url(add_query_arg('cat', $term->term_id)); ?>" 
+                           class="filter-btn <?php echo ($category_id === $term->term_id) ? 'active' : ''; ?>">
+                            <?php echo esc_html($term->name); ?>
                         </a>
                     <?php endforeach; ?>
                 </div>
