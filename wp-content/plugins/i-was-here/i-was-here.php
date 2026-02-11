@@ -3,7 +3,7 @@
 /**
  * Plugin Name: i-was-here (Dev Skeleton)
  * Description: Minimal development-first plugin to log EXIF data from images on upload and via manual rescan.
- * Version: 0.4.0
+ * Version: 0.5.0
  * Author: You
  */
 
@@ -13,7 +13,7 @@ if (! defined('ABSPATH')) exit;
 // CONSTANTS
 // --------------------------------------------------
 
-define('IWH_VERSION', '0.4.0');
+define('IWH_VERSION', '0.5.0');
 define('IWH_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 // Logging is disabled by default unless WP_DEBUG is explicitly enabled.

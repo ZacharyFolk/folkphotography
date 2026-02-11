@@ -1,5 +1,41 @@
 # FolkPhotography Theme - Changelog
 
+## Version 1.1.4 - February 2026
+
+### 🐛 Bug Fix
+
+**JavaScript - Missing Null Guard in Menu Handler**
+
+**Issue:** `handleMenuItemClick()` function checked `mainNav` but not `menuToggle` before using it. If `mainNav` existed but `menuToggle` was null, JavaScript would throw an error and break all subsequent JS on the page.
+
+**Fixed in:** `js/main.js` (line 124)
+
+**What Changed:**
+```javascript
+// BEFORE (BROKEN):
+if (window.innerWidth <= 768 && mainNav) {
+    mainNav.classList.remove('active');
+    menuToggle.classList.remove('active'); // ❌ menuToggle could be null!
+}
+
+// AFTER (FIXED):
+if (!mainNav || !menuToggle) return; // ✅ Guard both
+
+if (window.innerWidth <= 768) {
+    mainNav.classList.remove('active');
+    menuToggle.classList.remove('active');
+}
+```
+
+**Impact:**
+- ✅ Consistent null checking across all menu functions
+- ✅ No JavaScript errors on pages without header
+- ✅ All JS continues to work properly
+
+**Credit:** Code review feedback
+
+---
+
 ## Version 1.1.3 - February 2026
 
 ### 🐛 Critical Bug Fix

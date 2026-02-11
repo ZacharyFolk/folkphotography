@@ -120,7 +120,10 @@
      * Close mobile menu when clicking a menu item
      */
     function handleMenuItemClick() {
-        if (window.innerWidth <= 768 && mainNav) {
+        // Guard against null elements
+        if (!mainNav || !menuToggle) return;
+        
+        if (window.innerWidth <= 768) {
             mainNav.classList.remove('active');
             menuToggle.classList.remove('active');
         }
