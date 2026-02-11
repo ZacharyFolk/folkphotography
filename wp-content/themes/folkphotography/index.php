@@ -15,7 +15,7 @@
                 elseif (is_search()) :
                     ?>
                     <h1 class="page-title">
-                        <?php printf(__('Search Results for: %s', 'folkphotography'), '<span>' . get_search_query() . '</span>'); ?>
+                        <?php printf( esc_html__( 'Search Results for: %s', 'folkphotography' ), '<span>' . esc_html( get_search_query() ) . '</span>' ); ?>
                     </h1>
                 <?php endif; ?>
             </header>
