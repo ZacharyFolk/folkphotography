@@ -112,13 +112,30 @@ add_action('admin_enqueue_scripts', function ($hook) {
     global $post;
     if (!$post || $post->post_type !== 'attachment') return;
 
-    wp_enqueue_style('leaflet-css', 'https://unpkg.com/leaflet/dist/leaflet.css');
-    wp_enqueue_script('leaflet-js', 'https://unpkg.com/leaflet/dist/leaflet.js', [], null, true);
+    // Use consistent Leaflet handle and pinned version
+    if (!wp_script_is('leaflet', 'registered')) {
+        wp_enqueue_style(
+            'leaflet',
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+            [],
+            '1.9.4'
+        );
+        wp_enqueue_script(
+            'leaflet',
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+            [],
+            '1.9.4',
+            true
+        );
+    } else {
+        wp_enqueue_style('leaflet');
+        wp_enqueue_script('leaflet');
+    }
 
     wp_enqueue_script(
         'iwh-admin-map',
         plugin_dir_url(__FILE__) . 'js/admin-map.js',
-        ['leaflet-js', 'jquery'],
+        ['leaflet', 'jquery'], // Use 'leaflet' handle (same as theme)
         '0.1',
         true
     );

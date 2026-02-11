@@ -42,7 +42,11 @@ class IWH_Debug_Tools
     public function rescan()
     {
         if (! current_user_can('manage_options')) {
-            wp_die('Forbidden', 403);
+            wp_die(
+                __('You do not have sufficient permissions to access this page.', 'i-was-here'),
+                __('Forbidden', 'i-was-here'),
+                ['response' => 403]
+            );
         }
 
         check_admin_referer('iwh_rescan_exif');

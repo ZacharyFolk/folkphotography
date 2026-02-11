@@ -1,5 +1,26 @@
 # FolkPhotography Theme - Changelog
 
+## Version 1.1.2 - February 2026
+
+### 🐛 Critical Bug Fix
+
+**Camera Stats Widget - Wrong GPS Meta Keys**
+
+**Issue:** The Camera Stats widget was querying `_iwh_latitude` and `_iwh_longitude` for the locations count, but the rest of the theme/plugin uses `_iwh_lat` and `_iwh_lng`. This caused the locations count to always show 0.
+
+**Fixed in:** `inc/widgets.php` (lines 592-593)
+- Changed: `_iwh_latitude` → `_iwh_lat`
+- Changed: `_iwh_longitude` → `_iwh_lng`
+
+**Impact:** 
+- ✅ Locations count now shows correct number
+- ✅ Camera Stats widget fully functional
+- ✅ Consistent meta keys throughout theme
+
+**Credit:** Code review feedback
+
+---
+
 ## Version 1.1.1 - February 2026
 
 ### 🔧 Bug Fixes

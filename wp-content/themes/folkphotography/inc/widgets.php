@@ -590,8 +590,8 @@ class FolkPhoto_Camera_Stats_Widget extends WP_Widget
             "SELECT COUNT(DISTINCT CONCAT(lat.meta_value, ',', lng.meta_value)) 
              FROM {$wpdb->postmeta} lat
              INNER JOIN {$wpdb->postmeta} lng ON lat.post_id = lng.post_id
-             WHERE lat.meta_key = '_iwh_latitude' 
-             AND lng.meta_key = '_iwh_longitude'
+             WHERE lat.meta_key = '_iwh_lat' 
+             AND lng.meta_key = '_iwh_lng'
              AND lat.meta_value != '' 
              AND lng.meta_value != ''"
         );

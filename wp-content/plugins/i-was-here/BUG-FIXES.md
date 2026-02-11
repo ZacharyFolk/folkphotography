@@ -2,6 +2,170 @@
 
 ## 🔧 Version History
 
+### Version 0.4.0 - February 2026
+
+**Bug Fixes:** wp_die() Usage & Leaflet Version Conflicts
+
+#### ❌ Issue 1: Incorrect wp_die() Usage
+
+**File:** `includes/debug-tools.php`
+
+**Problem:**
+```php
+// BEFORE (INCORRECT):
+if (! current_user_can('manage_options')) {
+    wp_die('Forbidden', 403);
+}
+```
+
+**Why It's Wrong:**
+- `wp_die()`'s second parameter is the **page title**, not HTTP status code
+- This sets the title to "403" but may return HTTP 200 response
+- Incorrect HTTP semantics - search engines/browsers see 200 (success) instead of 403 (forbidden)
+- Security tools can't detect unauthorized access attempts
+
+**Solution:**
+```php
+// AFTER (CORRECT):
+if (! current_user_can('manage_options')) {
+    wp_die(
+        __('You do not have sufficient permissions to access this page.', 'i-was-here'),
+        __('Forbidden', 'i-was-here'),
+        ['response' => 403]
+    );
+}
+```
+
+**What Changed:**
+1. ✅ First parameter: User-friendly error message
+2. ✅ Second parameter: Page title ("Forbidden")
+3. ✅ Third parameter: Array with `['response' => 403]` for correct HTTP status
+4. ✅ Internationalized with `__()`
+
+**Impact:**
+- ✅ Correct HTTP 403 response sent
+- ✅ Better error message for users
+- ✅ Security tools can detect unauthorized access
+- ✅ Search engines handle correctly
+
+---
+
+#### ❌ Issue 2: Leaflet Version Conflicts
+
+**Files:** `admin/meta-box-location.php`, `frontend/shortcode-world-map.php`
+
+**Problem:**
+```php
+// BEFORE (PROBLEMATIC):
+wp_enqueue_style('leaflet-css', 'https://unpkg.com/leaflet/dist/leaflet.css');
+wp_enqueue_script('leaflet-js', 'https://unpkg.com/leaflet/dist/leaflet.js', [], null, true);
+```
+
+**Why It's Wrong:**
+1. ❌ No pinned version - gets latest (could break with updates)
+2. ❌ Different handle than theme (`leaflet-js` vs `leaflet`)
+3. ❌ Can cause duplicate downloads if theme already loads Leaflet
+4. ❌ Potential version conflicts (theme: 1.9.4, plugin: 1.9.5)
+5. ❌ Increases page weight (Leaflet loaded twice)
+
+**Real-World Impact:**
+- Theme loads Leaflet 1.9.4 (handle: `leaflet`)
+- Plugin loads Leaflet 1.9.x (handle: `leaflet-js`)
+- Result: 2 copies of Leaflet.js (~150KB each) = 300KB wasted
+- Potential: Version conflicts, map initialization issues
+
+**Solution:**
+```php
+// AFTER (CORRECT):
+// Use theme's Leaflet if available, otherwise enqueue our own
+if (!wp_script_is('leaflet', 'registered')) {
+    // Enqueue pinned version if theme doesn't provide Leaflet
+    wp_enqueue_style(
+        'leaflet',
+        'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+        [],
+        '1.9.4'
+    );
+    wp_enqueue_script(
+        'leaflet',
+        'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+        [],
+        '1.9.4',
+        true
+    );
+} else {
+    // Theme provides Leaflet, just ensure it's enqueued
+    wp_enqueue_style('leaflet');
+    wp_enqueue_script('leaflet');
+}
+
+// Enqueue our map script (depends on leaflet)
+wp_enqueue_script(
+    'iwh-admin-map',
+    plugin_dir_url(__FILE__) . 'js/admin-map.js',
+    ['leaflet', 'jquery'], // Use 'leaflet' handle (same as theme)
+    '0.1',
+    true
+);
+```
+
+**What Changed:**
+1. ✅ Checks if Leaflet already registered (`wp_script_is('leaflet', 'registered')`)
+2. ✅ Uses same handle as theme (`'leaflet'` instead of `'leaflet-js'`)
+3. ✅ Pinned to version 1.9.4 (same as theme)
+4. ✅ Reuses theme's Leaflet if available
+5. ✅ Falls back to own Leaflet if theme doesn't provide it
+
+**Impact:**
+- ✅ No duplicate Leaflet downloads (saves ~150KB)
+- ✅ No version conflicts
+- ✅ Works with or without theme
+- ✅ Predictable behavior (pinned version)
+- ✅ Better performance
+
+---
+
+#### 📋 Files Modified
+
+**Version 0.4.0:**
+1. `includes/debug-tools.php` - Fixed wp_die() usage
+2. `admin/meta-box-location.php` - Fixed Leaflet enqueue
+3. `frontend/shortcode-world-map.php` - Fixed Leaflet enqueue
+4. `i-was-here.php` - Updated version to 0.4.0
+5. `BUG-FIXES.md` - This file
+
+---
+
+#### 🧪 Testing
+
+**Test 1: wp_die() Returns Correct Status**
+
+1. Log out of WordPress
+2. Navigate to: `/wp-admin/admin-post.php?action=iwh_rescan_exif`
+3. Check browser developer tools → Network tab
+4. Should see: **403 Forbidden** (not 200 OK)
+5. Page should show: "You do not have sufficient permissions"
+
+**Test 2: No Duplicate Leaflet**
+
+1. Enable theme (folkphotography)
+2. Add Location Map widget to page
+3. View page source (Ctrl+U)
+4. Search for "leaflet" (Ctrl+F)
+5. Should find:
+   - ✅ One `leaflet.css` link
+   - ✅ One `leaflet.js` script
+   - ❌ NOT: `leaflet-css` or `leaflet-js` handles
+
+**Test 3: Plugin Works Without Theme**
+
+1. Switch to a different theme (Twenty Twenty-Four)
+2. View page with Location Map widget
+3. Map should still work
+4. Source should show Leaflet 1.9.4 loaded by plugin
+
+---
+
 ### Version 0.3.0 - February 2026
 
 **Critical Bug Fix:** EXIF Rescan Tool Not Extracting Data
@@ -305,10 +469,11 @@ public function rescan() {
 | 0.1.0 | Initial | N/A | Original release |
 | 0.2.0 | Feb 2026 | CSRF vulnerability | ✅ Fixed |
 | 0.3.0 | Feb 2026 | Rescan not extracting data | ✅ Fixed |
+| 0.4.0 | Feb 2026 | wp_die() usage & Leaflet conflicts | ✅ Fixed |
 
 ### Current Status:
 
-**Plugin Version:** 0.3.0  
+**Plugin Version:** 0.4.0  
 **Theme Version:** 1.1.1 (folkphotography)  
 **Issues:** 0  
 **Production Ready:** ✅ Yes

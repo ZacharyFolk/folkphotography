@@ -48,13 +48,33 @@ add_shortcode('iwh_world_map', function ($atts) {
         ];
     }
 
-    wp_enqueue_style('leaflet-css', 'https://unpkg.com/leaflet/dist/leaflet.css');
-    wp_enqueue_script('leaflet-js', 'https://unpkg.com/leaflet/dist/leaflet.js', [], null, true);
+    // Use theme's Leaflet if available, otherwise enqueue our own
+    if (!wp_script_is('leaflet', 'registered')) {
+        // Enqueue pinned version if theme doesn't provide Leaflet
+        wp_enqueue_style(
+            'leaflet',
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+            [],
+            '1.9.4'
+        );
+        wp_enqueue_script(
+            'leaflet',
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+            [],
+            '1.9.4',
+            true
+        );
+    } else {
+        // Theme provides Leaflet, just ensure it's enqueued
+        wp_enqueue_style('leaflet');
+        wp_enqueue_script('leaflet');
+    }
 
+    // Enqueue our frontend map script (depends on leaflet)
     wp_enqueue_script(
         'iwh-frontend-map',
         plugin_dir_url(__FILE__) . 'js/frontend-map.js',
-        ['leaflet-js'],
+        ['leaflet'], // Use 'leaflet' handle (same as theme)
         '0.1',
         true
     );
