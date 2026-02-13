@@ -143,7 +143,6 @@ add_action('admin_enqueue_scripts', function ($hook) {
     wp_localize_script('iwh-admin-map', 'IWH_MAP', [
         'lat' => get_post_meta($post->ID, '_iwh_lat', true) ?: 0,
         'lng' => get_post_meta($post->ID, '_iwh_lng', true) ?: 0,
-        'mapboxKey' => get_option('iwh_mapbox_api_key', ''),
     ]);
 });
 

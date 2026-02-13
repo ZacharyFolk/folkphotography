@@ -1,6 +1,6 @@
 <?php
 
-define('FOLKPHOTO_VERSION', '1.1.4');
+define('FOLKPHOTO_VERSION', '1.1.5');
 
 /**
  * Theme setup
@@ -444,3 +444,8 @@ function folkphotography_register_taxonomies()
     ));
 }
 add_action('init', 'folkphotography_register_taxonomies');
+
+/**
+ * Load custom widgets
+ */
+require_once get_template_directory() . '/inc/widgets.php';

@@ -1,10 +1,11 @@
 <?php
 
 /**
- * Plugin Name: i-was-here (Dev Skeleton)
- * Description: Minimal development-first plugin to log EXIF data from images on upload and via manual rescan.
- * Version: 0.5.0
- * Author: You
+ * Plugin Name: i-was-here
+ * Description: Automatically extracts EXIF metadata and GPS coordinates from uploaded images. Provides location maps, camera stats, and bulk scanning tools.
+ * Version: 0.6.0
+ * Author: Zachary Folk
+ * Text Domain: i-was-here
  */
 
 if (! defined('ABSPATH')) exit;
@@ -13,7 +14,7 @@ if (! defined('ABSPATH')) exit;
 // CONSTANTS
 // --------------------------------------------------
 
-define('IWH_VERSION', '0.5.0');
+define('IWH_VERSION', '0.6.0');
 define('IWH_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 // Logging is disabled by default unless WP_DEBUG is explicitly enabled.
