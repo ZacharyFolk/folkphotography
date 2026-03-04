@@ -12,8 +12,11 @@ class IWH_Exif_Reader
 
         $exif = @exif_read_data($file_path, null, true);
 
-        iwh_log('-----=================== EXIF raw ===================-----', $exif);
-        iwh_log('******************** << EXIF sections >> ********************', $exif ? array_keys($exif) : 'NO EXIF');
+        iwh_log('EXIF sections', $exif ? array_keys($exif) : 'NO EXIF');
+
+        if ( apply_filters( 'iwh_log_raw_exif', false ) ) {
+            iwh_log('EXIF raw', $exif);
+        }
 
         return $exif;
     }

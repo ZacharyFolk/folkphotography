@@ -1,5 +1,67 @@
 # FolkPhotography Theme - Changelog
 
+## Version 1.1.5 - March 2026
+
+### 🐛 Bug Fixes
+
+**GLightbox on Portfolio Widget Links**
+
+The Recent Portfolio widget had `glightbox` class and `data-gallery` attributes on the permalink anchor. GLightbox was intercepting clicks and trying to open the WordPress page URL inside the lightbox instead of navigating to it. Removed the lightbox attributes — portfolio items now correctly link to their post pages.
+
+**Fixed in:** `inc/widgets.php` — Recent Portfolio Widget
+
+---
+
+**Hero Image Fallback Never Ran**
+
+`folkphotography_get_hero_image()` had an early `return false` when no hero category was configured, making the EXIF-based fallback query completely unreachable. Restructured the function so the fallback always runs when the category query returns nothing.
+
+**Fixed in:** `functions.php` — `folkphotography_get_hero_image()`
+
+---
+
+**Location Map Widget — Empty Meta Rows Included**
+
+The GPS meta query used `'compare' => 'EXISTS'` which matched rows with empty string values, potentially including attachments that had GPS keys saved with no value. Changed to `'compare' => '!='` with `'value' => ''` to require actual coordinates. Also added `'fields' => 'ids'` to avoid loading full post objects for potentially hundreds of markers.
+
+**Fixed in:** `inc/widgets.php` — Location Map Widget
+
+---
+
+**Camera Stats Widget — Total Photo Count Undercounted**
+
+`total_photos` was counting rows where `_iwh_camera_make != ''`, which excluded any photo with EXIF data but no identified camera make. Changed to count `_iwh_has_exif = '1'` joined to `wp_posts` restricted to `post_type = 'attachment'`.
+
+**Fixed in:** `inc/widgets.php` — Camera Stats Widget
+
+### ♿ Accessibility
+
+**ARIA Attributes on Mobile Menu Toggle**
+
+Added `aria-expanded="false"` and `aria-controls="primary-menu"` to the hamburger button in markup. JavaScript now updates `aria-expanded` to reflect actual open/closed state across all three menu event handlers (toggle, close-on-outside-click, close-on-item-click). Added `menu_id => primary-menu` to `wp_nav_menu()` so the `aria-controls` target exists in the DOM.
+
+**Fixed in:** `header.php`, `js/main.js`
+
+### 🌐 Internationalization
+
+Wrapped hard-coded display strings in i18n functions across multiple files:
+
+- `inc/widgets.php` — Camera Stats widget labels
+- `page-templates/masonry-gallery.php` — filter group labels and type badges ("Show:", "All", "Portfolio", "Blog Posts", "Category:", "Blog")
+- `single.php` — byline string `by %s` (also corrected to use `esc_html( get_the_author() )` instead of bare `the_author()`)
+
+### 🔧 Code Quality
+
+**functions.php Full Cleanup**
+
+- Added section banners and docblocks to all functions
+- Refactored `folkphotography_widgets_init()` to use a shared array for repeated arguments
+- Expanded customizer descriptions
+- Consistent formatting and indentation throughout
+- Added `wp_reset_postdata()` call that was missing after the hero category query
+
+---
+
 ## Version 1.1.4 - February 2026
 
 ### 🐛 Bug Fix

@@ -125,11 +125,4 @@ GNU General Public License v3.0
 
 ## Changelog
 
-### Version 1.0.0
-- Initial release
-- Fullscreen hero images with parallax
-- Dark minimalist design
-- Responsive navigation
-- WordPress block editor support
-- Full WooCommerce integration
-- Complete EXIF data support via I-Was-Here plugin integration
+See [CHANGELOG.md](CHANGELOG.md) for full version history.
