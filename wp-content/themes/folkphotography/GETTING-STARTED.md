@@ -1,5 +1,64 @@
 # Getting Started with FolkPhotography Theme
 
+---
+
+## Critical First Step: Homepage Setup
+
+> **Do this before anything else.** Without this, your homepage will show full blog posts instead of the designed layout.
+
+### How the Homepage Works
+
+This theme uses a WordPress template called `front-page.php`, which **always** handles the homepage — it takes priority over any other template. You do not build the homepage with the Block Editor; the layout is hardcoded in layers:
+
+```
+1. Hero Section          ← fullscreen parallax image (configured in Customizer)
+2. Widget Area: After Hero  ← you build this in Appearance → Widgets
+3. Page Content          ← optional: the body of a WordPress Page you assign as Front Page
+4. Widget Area: Featured
+5. Widget Area: Gallery Grid
+```
+
+The "Page Content" slot in the middle is driven by WordPress's main query. If WordPress thinks it should be showing blog posts (the default), it dumps **full post content** in that slot using `the_content()` — no excerpts, no layout, just raw posts between your widget sections. That is wrong behavior.
+
+The fix is to tell WordPress to use a specific Page for the homepage so the content slot renders cleanly.
+
+### Step 1: Create Required Pages
+
+Go to **Pages → Add New** and create these two pages:
+
+| Page Title | Content | Purpose |
+|---|---|---|
+| `Home` | Leave blank (or add a short bio/welcome paragraph) | Assigned as Front Page — prevents posts from appearing |
+| `Journal` | Leave blank | Assigned as Posts Page — this becomes your blog archive |
+
+> The `Home` page content (if any) appears between the "After Hero" and "Featured" widget areas on your homepage. Keep it minimal — a short paragraph at most, or leave it blank entirely.
+
+### Step 2: Configure Reading Settings
+
+Go to **Settings → Reading** and set:
+
+- **Your homepage displays:** A static page
+- **Homepage:** Home *(the page you just created)*
+- **Posts page:** Journal *(the page you just created)*
+
+Click **Save Changes**.
+
+**Why this matters:**
+- With "A static page" selected, the homepage content slot shows only the `Home` page content (clean)
+- The `Journal` page automatically becomes your blog archive, powered by `index.php`
+- The hero and all three widget areas work exactly the same either way — only the middle content slot is affected
+
+### Step 3: Verify It Works
+
+Visit your homepage. You should see:
+- Hero section (or blank if hero not yet configured)
+- No blog posts dumped in the middle of the page
+- Footer
+
+The page will look minimal until you add widgets (next section) and configure the hero image.
+
+---
+
 ## Your Photography Organization Strategy
 
 ### Quick Start - Path of Least Resistance
@@ -140,42 +199,67 @@ Instagram
 
 ## Step-by-Step Setup Guide
 
-### Phase 1: Basic Setup (30 minutes)
+### Phase 1: Basic Setup (30–45 minutes)
 
 1. **Activate Theme**
    - Appearance → Themes → Activate "FolkPhotography"
 
-2. **Create Categories**
+2. **Set Up Homepage (Critical — do this first)**
+   - Pages → Add New → Title: `Home` → Leave body blank → Publish
+   - Pages → Add New → Title: `Journal` → Leave body blank → Publish
+   - Settings → Reading → Homepage displays: **A static page**
+   - Homepage: `Home` | Posts page: `Journal` → Save Changes
+   - *(See "Critical First Step: Homepage Setup" section above for full explanation)*
+
+3. **Create Categories**
    - Posts → Categories → Add: Astro, Wildlife, Street, Macro, Portraits, Travel, Film/Holga, Landscape
 
-3. **Configure Hero**
-   - Appearance → Customize → Hero Image Settings
-   - Create category: "Hero Images" or "Featured"
-   - Upload 5-10 of your best fullscreen-worthy images
-   - Assign them to that category
-   - Select category in customizer
+4. **Configure Hero Image**
+   - Create a category called "Hero Images"
+   - Upload 5–10 of your best landscape-oriented images to the Media Library
+   - In the Media Library, open each image → assign it to the "Hero Images" category
+     *(Note: the theme registers categories for attachments, so media files can have categories)*
+   - Go to Appearance → Customize → Hero Image Settings
+   - Select "Hero Images" from the dropdown
+   - Set parallax speed (default 0.5 is a good starting point)
+   - Save & Publish
 
-4. **Create Menu**
+5. **Create Menu**
    - Appearance → Menus → Create "Primary Menu"
-   - Add: Home, Portfolio, Journal, Shop, About, Contact
-   - Assign to "Primary Menu" location
+   - Add: Home, Portfolio, Journal, Prints (Shop), About, Contact
+   - Assign to "Primary Menu" location → Save
 
 ### Phase 2: Homepage Widgets (20 minutes)
 
-1. **Go to:** Appearance → Widgets
+The homepage has three widget areas below the hero. Go to **Appearance → Widgets** to build them out. You must have the Reading settings configured (Phase 1, Step 2) before the widgets will display correctly on the front page.
 
-2. **Homepage - After Hero** Widget Area:
-   - Add: "Recent Portfolio Items"
-   - Title: "Latest Work"
-   - Number: 6
+**Available custom widgets for the homepage:**
+- **Recent Portfolio Items** — grid of your Portfolio post type entries
+- **Category Gallery** — grid of post featured images from a specific category (opens in lightbox)
+- **Photo Location Map** — interactive Leaflet map of GPS-tagged photos
+- **Camera & Photography Stats** — auto-generated stats from EXIF data (total photos, favorite camera, lens, etc.)
+
+**Recommended starting configuration:**
+
+1. **Homepage - After Hero** widget area:
+   - Add: **Recent Portfolio Items**
+   - Title: `Latest Work`
+   - Number of items: 6
    - Columns: 3
 
-3. **Homepage - Gallery Grid** Widget Area:
-   - Add: "Category Gallery"
-   - Title: "Recent Adventures" (or your category name)
-   - Category: Travel (or your choice)
+2. **Homepage - Featured Section** widget area:
+   - Add: **Camera & Photography Stats**
+   - Title: `By The Numbers`
+   - *(No configuration needed — auto-reads from EXIF data)*
+
+3. **Homepage - Gallery Grid** widget area:
+   - Add: **Category Gallery**
+   - Title: `Recent Adventures` (or name a specific category)
+   - Category: choose one of your main categories (e.g., Travel, Landscape)
    - Number: 9
    - Columns: 3
+
+You can also add a **Photo Location Map** to any widget area — it works best once you have photos with GPS data uploaded.
 
 ### Phase 3: Start Uploading! (Ongoing)
 
@@ -258,13 +342,15 @@ This builds a searchable, filterable database of your work.
 ## Getting Started Checklist
 
 - [ ] Activate FolkPhotography theme
+- [ ] Create `Home` page (blank body) and `Journal` page (blank body)
+- [ ] Settings → Reading → set Homepage to `Home`, Posts page to `Journal`
 - [ ] Create main categories (Astro, Wildlife, Street, etc.)
 - [ ] Create "Hero Images" category
-- [ ] Upload 5-10 hero images
-- [ ] Configure hero in Customizer
-- [ ] Create primary menu
-- [ ] Add homepage widgets
-- [ ] Upload first 10-20 photos with categories
+- [ ] Upload 5-10 hero images, assign them to "Hero Images" category in Media Library
+- [ ] Configure hero in Customizer (Appearance → Customize → Hero Image Settings)
+- [ ] Create primary menu (Home, Portfolio, Journal, Prints, About, Contact)
+- [ ] Add homepage widgets (After Hero, Featured, Gallery Grid)
+- [ ] Upload first 10-20 photos with categories and featured images set
 - [ ] Create first Portfolio collection
 - [ ] Set up at least one product (if selling)
 
@@ -274,11 +360,20 @@ This builds a searchable, filterable database of your work.
 
 **Common Questions:**
 
+**Q: Should I set the homepage to "Latest posts" or "A static page"?**
+A: Always use **A static page**. See the "Critical First Step: Homepage Setup" section at the top of this document. If you leave it on "Latest posts", full blog post content gets injected between your widget areas because `front-page.php` calls `the_content()` (not an excerpt) in its content loop.
+
+**Q: I set a static page but the Home page shows a title or blank space — how do I remove it?**
+A: In the `front-page.php` template, the page title only shows if `get_the_title()` is non-empty, and content only shows if the Home page has body content. Just leave the Home page body blank and the title/header section won't appear. If a title still shows, you can also leave the page title blank (WordPress will use a URL slug instead, which isn't displayed).
+
 **Q: How do I control what shows on homepage?**
-A: Use Appearance → Widgets. Add widgets to the three homepage areas.
+A: Three ways, in order of visual priority: (1) Hero image — configured in Appearance → Customize → Hero Image Settings. (2) Widget areas — Appearance → Widgets, add to the three Homepage areas. (3) Page content — edit the "Home" page to add a welcome paragraph (shows between After Hero and Featured widget areas).
+
+**Q: How does the blog / Journal page work?**
+A: Once you assign a "Posts page" in Settings → Reading, WordPress automatically uses `index.php` to render that page as a blog archive. You never need to edit the Journal page content — WordPress takes over.
 
 **Q: Should I use Posts or Portfolio?**
-A: Posts = stories/blogs. Portfolio = curated collections. Both are great!
+A: Posts = stories/blogs with narrative (your Journal). Portfolio = curated collections of your best work, displayed in image grids.
 
 **Q: How many categories should I use?**
 A: Start with 5-8 main subjects. You can always add more.
@@ -290,7 +385,7 @@ A: No! The I-Was-Here plugin auto-extracts GPS from your images.
 A: Yes! WooCommerce is fully integrated. Add products normally.
 
 **Q: How do I create a photo grid?**
-A: Use the Category Gallery widget in any widget area.
+A: Use the Category Gallery widget in any widget area. It pulls from Post categories — make sure your posts have a featured image set.
 
 ---
 
