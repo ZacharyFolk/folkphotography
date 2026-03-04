@@ -25,16 +25,17 @@
         </div>
 
         <nav class="main-navigation" id="main-navigation">
-            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-menu">
                 <span class="menu-icon"></span>
                 ☰
             </button>
             <?php
             wp_nav_menu(array(
                 'theme_location' => 'primary',
-                'menu_class' => 'menu',
-                'container' => false,
-                'fallback_cb' => false,
+                'menu_class'     => 'menu',
+                'menu_id'        => 'primary-menu',
+                'container'      => false,
+                'fallback_cb'    => false,
             ));
             ?>
         </nav>

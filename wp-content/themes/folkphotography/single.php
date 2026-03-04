@@ -15,7 +15,7 @@
                             <?php echo get_the_date(); ?>
                         </span>
                         <span class="byline">
-                            by <?php the_author(); ?>
+                            <?php printf( esc_html__( 'by %s', 'folkphotography' ), esc_html( get_the_author() ) ); ?>
                         </span>
                         <?php if (has_category()) : ?>
                             <span class="categories">

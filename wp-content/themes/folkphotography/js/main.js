@@ -96,9 +96,10 @@
     function toggleMobileMenu() {
         // Guard against null elements
         if (!mainNav || !menuToggle) return;
-        
+
         mainNav.classList.toggle('active');
         menuToggle.classList.toggle('active');
+        menuToggle.setAttribute('aria-expanded', mainNav.classList.contains('active').toString());
     }
 
     /**
@@ -107,11 +108,12 @@
     function closeMobileMenu(event) {
         // Guard against null menuToggle or mainNav
         if (!mainNav || !menuToggle) return;
-        
+
         if (mainNav.classList.contains('active')) {
             if (!mainNav.contains(event.target) && !menuToggle.contains(event.target)) {
                 mainNav.classList.remove('active');
                 menuToggle.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
             }
         }
     }
@@ -122,10 +124,11 @@
     function handleMenuItemClick() {
         // Guard against null elements
         if (!mainNav || !menuToggle) return;
-        
+
         if (window.innerWidth <= 768) {
             mainNav.classList.remove('active');
             menuToggle.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
         }
     }
 

@@ -83,18 +83,18 @@ get_header();
             <!-- Filter Options -->
             <div class="masonry-filters">
                 <div class="filter-group">
-                    <label>Show:</label>
-                    <a href="<?php echo esc_url(remove_query_arg('type')); ?>" 
+                    <label><?php esc_html_e( 'Show:', 'folkphotography' ); ?></label>
+                    <a href="<?php echo esc_url(remove_query_arg('type')); ?>"
                        class="filter-btn <?php echo ($portfolio_type === 'all') ? 'active' : ''; ?>">
-                        All
+                        <?php esc_html_e( 'All', 'folkphotography' ); ?>
                     </a>
-                    <a href="<?php echo esc_url(add_query_arg('type', 'portfolio')); ?>" 
+                    <a href="<?php echo esc_url(add_query_arg('type', 'portfolio')); ?>"
                        class="filter-btn <?php echo ($portfolio_type === 'portfolio') ? 'active' : ''; ?>">
-                        Portfolio
+                        <?php esc_html_e( 'Portfolio', 'folkphotography' ); ?>
                     </a>
-                    <a href="<?php echo esc_url(add_query_arg('type', 'posts')); ?>" 
+                    <a href="<?php echo esc_url(add_query_arg('type', 'posts')); ?>"
                        class="filter-btn <?php echo ($portfolio_type === 'posts') ? 'active' : ''; ?>">
-                        Blog Posts
+                        <?php esc_html_e( 'Blog Posts', 'folkphotography' ); ?>
                     </a>
                 </div>
                 
@@ -142,10 +142,10 @@ get_header();
                 if (!empty($filter_terms) && !is_wp_error($filter_terms)) :
                 ?>
                 <div class="filter-group">
-                    <label>Category:</label>
-                    <a href="<?php echo esc_url(remove_query_arg('cat')); ?>" 
+                    <label><?php esc_html_e( 'Category:', 'folkphotography' ); ?></label>
+                    <a href="<?php echo esc_url(remove_query_arg('cat')); ?>"
                        class="filter-btn <?php echo ($category_id === 0) ? 'active' : ''; ?>">
-                        All
+                        <?php esc_html_e( 'All', 'folkphotography' ); ?>
                     </a>
                     <?php foreach ($filter_terms as $term) : ?>
                         <a href="<?php echo esc_url(add_query_arg('cat', $term->term_id)); ?>" 
@@ -169,7 +169,7 @@ get_header();
                                     <?php the_post_thumbnail('portfolio-large'); ?>
                                     <div class="masonry-overlay">
                                         <h3 class="masonry-title"><?php the_title(); ?></h3>
-                                        <span class="masonry-type"><?php echo get_post_type() === 'portfolio' ? 'Portfolio' : 'Blog'; ?></span>
+                                        <span class="masonry-type"><?php echo get_post_type() === 'portfolio' ? esc_html__( 'Portfolio', 'folkphotography' ) : esc_html__( 'Blog', 'folkphotography' ); ?></span>
                                     </div>
                                 </a>
                                 
