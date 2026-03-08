@@ -428,3 +428,4 @@ add_action( 'init', 'folkphotography_register_taxonomies' );
 // =============================================================================
 
 require_once get_template_directory() . '/inc/widgets.php';
+require_once get_template_directory() . '/inc/media-admin.php';
