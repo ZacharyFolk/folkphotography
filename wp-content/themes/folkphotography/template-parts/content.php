@@ -1,16 +1,13 @@
-<article id="post-<?php the_ID(); ?>" <?php post_class('post-excerpt'); ?>>
-    <?php if (has_post_thumbnail()) : ?>
-        <div class="post-thumbnail">
-            <a href="<?php the_permalink(); ?>">
-                <?php the_post_thumbnail('medium'); ?>
-            </a>
-        </div>
+<article id="post-<?php the_ID(); ?>" <?php post_class( has_post_thumbnail() ? 'post-excerpt has-thumbnail' : 'post-excerpt' ); ?>>
+    <?php if ( has_post_thumbnail() ) : ?>
+        <a class="post-thumbnail" href="<?php the_permalink(); ?>" aria-hidden="true" tabindex="-1">
+            <?php the_post_thumbnail( 'thumbnail' ); ?>
+        </a>
     <?php endif; ?>
 
     <div class="post-summary">
         <header class="entry-header">
-            <?php the_title('<h2 class="entry-title"><a href="' . esc_url(get_permalink()) . '">', '</a></h2>'); ?>
-
+            <?php the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '">', '</a></h2>' ); ?>
             <div class="entry-meta">
                 <span class="posted-on"><?php echo get_the_date(); ?></span>
             </div>
@@ -21,7 +18,7 @@
         </div>
 
         <a href="<?php the_permalink(); ?>" class="read-more">
-            <?php _e('Read More', 'folkphotography'); ?> &rarr;
+            <?php _e( 'Read More', 'folkphotography' ); ?> &rarr;
         </a>
     </div>
 </article>

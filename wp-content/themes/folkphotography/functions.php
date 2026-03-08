@@ -147,26 +147,16 @@ add_action( 'wp_enqueue_scripts', 'folkphotography_scripts' );
  * Register Customizer settings and controls.
  *
  * Adds a "Hero Image Settings" section under Appearance → Customize with:
- *   - hero_category   : category to pull random hero images from
- *   - parallax_speed  : parallax scroll multiplier (0.1 = slow, 1.0 = fast)
+ *   - parallax_speed : parallax scroll multiplier (0.1 = slow, 1.0 = fast)
+ *
+ * Hero images are selected per-image in the Media Library using the
+ * "Use in Hero Rotation" checkbox — no category required.
  */
 function folkphotography_customizer( $wp_customize ) {
     $wp_customize->add_section( 'folkphotography_hero', array(
-        'title'    => __( 'Hero Image Settings', 'folkphotography' ),
-        'priority' => 30,
-    ) );
-
-    $wp_customize->add_setting( 'hero_category', array(
-        'default'           => '',
-        'sanitize_callback' => 'absint',
-    ) );
-
-    $wp_customize->add_control( 'hero_category', array(
-        'label'       => __( 'Hero Images Category', 'folkphotography' ),
-        'description' => __( 'Select a category to pull random hero images from. Images in this category must be uploaded to the Media Library and assigned to the category.', 'folkphotography' ),
-        'section'     => 'folkphotography_hero',
-        'type'        => 'select',
-        'choices'     => folkphotography_get_category_choices(),
+        'title'       => __( 'Hero Image Settings', 'folkphotography' ),
+        'description' => __( 'To add images to the hero rotation: open any image in Media Library and check "Use in Hero Rotation".', 'folkphotography' ),
+        'priority'    => 30,
     ) );
 
     $wp_customize->add_setting( 'parallax_speed', array(
@@ -189,22 +179,6 @@ function folkphotography_customizer( $wp_customize ) {
 add_action( 'customize_register', 'folkphotography_customizer' );
 
 /**
- * Build the category dropdown choices for the Customizer hero control.
- *
- * @return array term_id => name pairs, with an empty placeholder first.
- */
-function folkphotography_get_category_choices() {
-    $choices    = array( '' => __( 'Select a category', 'folkphotography' ) );
-    $categories = get_categories( array( 'hide_empty' => false ) );
-
-    foreach ( $categories as $category ) {
-        $choices[ $category->term_id ] = $category->name;
-    }
-
-    return $choices;
-}
-
-/**
  * Sanitize a decimal/float value for Customizer settings.
  *
  * @param  mixed $input Raw input value.
@@ -219,69 +193,76 @@ function folkphotography_sanitize_decimal( $input ) {
 // =============================================================================
 
 /**
- * Return a URL for the hero background image.
+ * Add a "Use in Hero Rotation" checkbox to the Media Library attachment edit panel.
  *
- * Resolution order:
- *   1. Random image from the configured hero category (if set and has images).
- *   2. Random image with any EXIF data extracted by the i-was-here plugin.
- *   3. false — caller should suppress the hero section entirely.
+ * Visible when you click any image in Media → Library. Stored as post meta
+ * '_folk_hero' = '1' on the attachment. No categories required.
  *
- * @return string|false Image URL or false if no suitable image found.
+ * @param  array   $form_fields Existing attachment form fields.
+ * @param  WP_Post $post        The attachment post object.
+ * @return array
+ */
+function folkphotography_hero_attachment_field( $form_fields, $post ) {
+    $checked = get_post_meta( $post->ID, '_folk_hero', true ) === '1';
+    $form_fields['folk_hero'] = array(
+        'label' => __( 'Hero Rotation', 'folkphotography' ),
+        'input' => 'html',
+        'html'  => '<label style="display:flex;align-items:center;gap:6px;">'
+                 . '<input type="checkbox" name="attachments[' . $post->ID . '][folk_hero]" value="1"' . checked( $checked, true, false ) . '>'
+                 . __( 'Use in homepage hero rotation', 'folkphotography' )
+                 . '</label>',
+        'helps' => '',
+    );
+    return $form_fields;
+}
+add_filter( 'attachment_fields_to_edit', 'folkphotography_hero_attachment_field', 10, 2 );
+
+/**
+ * Save the hero rotation checkbox when an attachment is updated.
+ *
+ * @param  array $post       Attachment post data (will be saved).
+ * @param  array $attachment POST data from the attachment form.
+ * @return array
+ */
+function folkphotography_hero_attachment_field_save( $post, $attachment ) {
+    $value = ! empty( $attachment['folk_hero'] ) ? '1' : '';
+    update_post_meta( $post['ID'], '_folk_hero', $value );
+    return $post;
+}
+add_filter( 'attachment_fields_to_save', 'folkphotography_hero_attachment_field_save', 10, 2 );
+
+/**
+ * Return a random hero image URL from images marked via the Media Library checkbox.
+ *
+ * Pulls all attachments with _folk_hero = '1', picks one at random.
+ * Returns false if none are marked, suppressing the hero section entirely.
+ *
+ * @return string|false
  */
 function folkphotography_get_hero_image() {
-    $hero_category = get_theme_mod( 'hero_category', '' );
-
-    if ( ! empty( $hero_category ) ) {
-        $query = new WP_Query( array(
-            'post_type'      => 'attachment',
-            'post_mime_type' => 'image',
-            'post_status'    => 'inherit',
-            'posts_per_page' => 1,
-            'orderby'        => 'rand',
-            'tax_query'      => array(
-                array(
-                    'taxonomy' => 'category',
-                    'field'    => 'term_id',
-                    'terms'    => $hero_category,
-                ),
-            ),
-        ) );
-
-        if ( $query->have_posts() ) {
-            $query->the_post();
-            $image_url = wp_get_attachment_image_url( get_the_ID(), 'hero-fullscreen' );
-            wp_reset_postdata();
-            return $image_url;
-        }
-
-        wp_reset_postdata();
-    }
-
-    // Fallback: any image that has had EXIF data extracted.
-    // Runs when no category is configured, or the category returned no images.
     $query = new WP_Query( array(
         'post_type'      => 'attachment',
         'post_mime_type' => 'image',
         'post_status'    => 'inherit',
-        'posts_per_page' => 1,
-        'orderby'        => 'rand',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
         'meta_query'     => array(
             array(
-                'key'     => '_iwh_has_exif',
+                'key'     => '_folk_hero',
                 'value'   => '1',
                 'compare' => '=',
             ),
         ),
     ) );
 
-    if ( $query->have_posts() ) {
-        $query->the_post();
-        $image_url = wp_get_attachment_image_url( get_the_ID(), 'hero-fullscreen' );
-        wp_reset_postdata();
-        return $image_url;
+    if ( empty( $query->posts ) ) {
+        return false;
     }
 
-    return false;
+    $id  = $query->posts[ array_rand( $query->posts ) ];
+    $url = wp_get_attachment_image_url( $id, 'hero-fullscreen' );
+
+    return $url ?: false;
 }
 
 // =============================================================================

@@ -32,15 +32,15 @@ $parallax_speed = get_theme_mod('parallax_speed', 0.5);
             the_post();
         ?>
             <article id="post-<?php the_ID(); ?>" <?php post_class('page-content'); ?>>
-                <?php if (get_the_title()) : ?>
-                    <header class="entry-header">
-                        <h1 class="entry-title"><?php the_title(); ?></h1>
-                    </header>
-                <?php endif; ?>
-
+                <?php
+                // Never show the page title on the homepage — the hero section is the visual header.
+                // Only output this section if the Home page actually has body content.
+                $home_content = get_the_content();
+                if ( ! empty( trim( $home_content ) ) ) : ?>
                 <div class="entry-content">
                     <?php the_content(); ?>
                 </div>
+                <?php endif; ?>
             </article>
         <?php endwhile; ?>
     </div>
