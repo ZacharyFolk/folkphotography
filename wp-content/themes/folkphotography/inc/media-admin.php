@@ -50,11 +50,11 @@ add_action( 'manage_media_custom_column', function ( $column_name, $attachment_i
         $parts[] = '<span class="folk-badge folk-badge--hero">Hero</span>';
     }
 
-    // Posts that use this image as their featured image (up to 3)
+    // Posts that use this image as their featured image (up to 3 distinct posts)
     global $wpdb;
     $post_ids = $wpdb->get_col(
         $wpdb->prepare(
-            "SELECT post_id FROM {$wpdb->postmeta}
+            "SELECT DISTINCT post_id FROM {$wpdb->postmeta}
              WHERE meta_key = '_thumbnail_id' AND meta_value = %d
              LIMIT 3",
             $attachment_id
@@ -70,9 +70,16 @@ add_action( 'manage_media_custom_column', function ( $column_name, $attachment_i
             $status_obj = get_post_status_object( $post->post_status );
             $label      = $status_obj ? $status_obj->label : $post->post_status;
             $edit_link  = get_edit_post_link( $pid );
-            $parts[]    = '<a href="' . esc_url( $edit_link ) . '" class="folk-post-link">'
-                        . esc_html( $post->post_title ?: __( '(no title)', 'folkphotography' ) )
-                        . ' <em>(' . esc_html( $label ) . ')</em></a>';
+            $title      = esc_html( $post->post_title ?: __( '(no title)', 'folkphotography' ) );
+            $label_html = ' <em>(' . esc_html( $label ) . ')</em>';
+
+            // get_edit_post_link() returns null when the post type has no edit
+            // screen or permissions are missing — guard before passing to esc_url().
+            if ( $edit_link ) {
+                $parts[] = '<a href="' . esc_url( $edit_link ) . '" class="folk-post-link">' . $title . $label_html . '</a>';
+            } else {
+                $parts[] = '<span class="folk-post-link">' . $title . $label_html . '</span>';
+            }
         }
         if ( count( $post_ids ) >= 3 ) {
             $parts[] = '<span class="folk-overflow">…and more</span>';
@@ -284,4 +291,66 @@ add_action( 'admin_notices', function () {
     }
 
     echo '<div class="notice notice-success is-dismissible"><p>' . $msg . '</p></div>';
+} );
+
+// =============================================================================
+// 4. FEATURED IMAGE COLUMN IN ADMIN POSTS / PORTFOLIO LISTS
+// =============================================================================
+
+/**
+ * Insert a thumbnail column immediately before the Title column on the Posts
+ * and Portfolio admin list screens.
+ *
+ * Uses the 'folk-admin-thumb' image size (60×60 hard-crop, registered in
+ * functions.php). The column header is intentionally left blank — the tiny
+ * square thumbnails are self-explanatory and a label wastes space.
+ */
+function folkphotography_add_thumb_column( $columns ) {
+    $reordered = [];
+    foreach ( $columns as $key => $label ) {
+        if ( $key === 'title' ) {
+            $reordered['folk_thumb'] = ''; // blank header — no label needed
+        }
+        $reordered[ $key ] = $label;
+    }
+    return $reordered;
+}
+add_filter( 'manage_posts_columns',     'folkphotography_add_thumb_column' );
+add_filter( 'manage_portfolio_posts_columns', 'folkphotography_add_thumb_column' );
+
+/**
+ * Render the thumbnail for each row.
+ *
+ * Wraps the image in an edit link so clicking the thumbnail opens the post editor.
+ */
+function folkphotography_thumb_column_content( $column, $post_id ) {
+    if ( $column !== 'folk_thumb' ) {
+        return;
+    }
+    if ( has_post_thumbnail( $post_id ) ) {
+        printf(
+            '<a href="%s">%s</a>',
+            esc_url( get_edit_post_link( $post_id ) ),
+            get_the_post_thumbnail( $post_id, 'folk-admin-thumb' )
+        );
+    } else {
+        // Placeholder so the column height stays consistent
+        echo '<span style="display:block;width:60px;height:60px;background:#2c2c2c;border-radius:3px;"></span>';
+    }
+}
+add_action( 'manage_posts_custom_column',          'folkphotography_thumb_column_content', 10, 2 );
+add_action( 'manage_portfolio_posts_custom_column', 'folkphotography_thumb_column_content', 10, 2 );
+
+/**
+ * Styles for the thumbnail column — scoped to edit.php only.
+ */
+add_action( 'admin_head-edit.php', function () {
+    ?>
+    <style>
+        .column-folk_thumb            { width: 66px; padding: 8px 4px !important; }
+        .column-folk_thumb img        { display: block; width: 60px; height: 60px;
+                                        object-fit: cover; border-radius: 3px; }
+        .column-folk_thumb a:hover img { opacity: .8; }
+    </style>
+    <?php
 } );

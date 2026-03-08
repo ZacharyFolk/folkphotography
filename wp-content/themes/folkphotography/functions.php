@@ -34,11 +34,12 @@ function folkphotography_setup() {
     ) );
 
     // Named sizes used throughout templates and widgets
-    add_image_size( 'hero-fullscreen', 2560, 1440, true );
-    add_image_size( 'hero-desktop',    1920, 1080, true );
-    add_image_size( 'portfolio-large', 1200, 1200, false );
-    add_image_size( 'portfolio-medium', 800,  800, false );
-    add_image_size( 'gallery-thumb',    400,  400, true );
+    add_image_size( 'hero-fullscreen',  2560, 1440, true );
+    add_image_size( 'hero-desktop',     1920, 1080, true );
+    add_image_size( 'portfolio-large',  1200, 1200, false );
+    add_image_size( 'portfolio-medium',  800,  800, false );
+    add_image_size( 'gallery-thumb',     400,  400, true );
+    add_image_size( 'folk-admin-thumb',   60,   60, true ); // Admin post list thumbnail
 
     // Allow standard categories and tags to be assigned to media attachments.
     // Required for hero image filtering and the Category Gallery widget.
