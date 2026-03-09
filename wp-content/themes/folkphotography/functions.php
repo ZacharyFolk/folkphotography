@@ -145,46 +145,45 @@ add_action( 'wp_enqueue_scripts', 'folkphotography_scripts' );
 // =============================================================================
 
 /**
- * Customizer info control — renders a styled notice with optional link.
- * Used to explain settings that are configured elsewhere in the admin.
- */
-class Folkphotography_Info_Control extends WP_Customize_Control {
-    public $type = 'folkphotography_info';
-
-    public function render_content() {
-        ?>
-        <div style="
-            background: #1a1a1a;
-            border-left: 3px solid #2271b1;
-            padding: 10px 12px;
-            border-radius: 0 3px 3px 0;
-            font-size: 12px;
-            line-height: 1.6;
-            color: #ccc;
-        ">
-            <?php echo wp_kses_post( $this->description ); ?>
-        </div>
-        <?php
-    }
-}
-
-/**
  * Register Customizer settings and controls.
  *
- * Hero Image section contains:
- *   - An info panel explaining how to mark images for hero rotation
- *     (done via checkbox in Media Library, not in the Customizer)
- *   - A live count of how many images are currently marked
- *   - parallax_speed control
+ * The Folkphotography_Info_Control class is defined inside this callback so
+ * that WP_Customize_Control is guaranteed to exist before we extend it.
+ * Defining it at file scope (outside any hook) causes a fatal error because
+ * WP_Customize_Control is not loaded when functions.php is first parsed.
  */
 function folkphotography_customizer( $wp_customize ) {
+
+    // Define the info control class here — WP_Customize_Control exists by now.
+    // The class_exists guard prevents a fatal if this hook somehow fires twice.
+    if ( ! class_exists( 'Folkphotography_Info_Control' ) ) {
+        class Folkphotography_Info_Control extends WP_Customize_Control {
+            public $type = 'folkphotography_info';
+
+            public function render_content() {
+                ?>
+                <div style="
+                    background: #1a1a1a;
+                    border-left: 3px solid #2271b1;
+                    padding: 10px 12px;
+                    border-radius: 0 3px 3px 0;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #ccc;
+                ">
+                    <?php echo wp_kses_post( $this->description ); ?>
+                </div>
+                <?php
+            }
+        }
+    }
 
     $wp_customize->add_section( 'folkphotography_hero', array(
         'title'    => __( 'Hero Image Settings', 'folkphotography' ),
         'priority' => 30,
     ) );
 
-    // Count how many images are currently marked for hero rotation
+    // Count images currently marked for hero rotation
     $hero_count = (int) ( new WP_Query( array(
         'post_type'      => 'attachment',
         'post_status'    => 'inherit',
@@ -212,7 +211,6 @@ function folkphotography_customizer( $wp_customize ) {
         . '3. Check or uncheck <em>"Use in homepage hero rotation"</em><br>'
         . '4. Click Update';
 
-    // Dummy setting required by the Customizer API to attach a control
     $wp_customize->add_setting( 'hero_info_placeholder', array(
         'sanitize_callback' => '__return_empty_string',
     ) );
