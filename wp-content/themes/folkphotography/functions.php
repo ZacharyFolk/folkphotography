@@ -145,20 +145,83 @@ add_action( 'wp_enqueue_scripts', 'folkphotography_scripts' );
 // =============================================================================
 
 /**
+ * Customizer info control — renders a styled notice with optional link.
+ * Used to explain settings that are configured elsewhere in the admin.
+ */
+class Folkphotography_Info_Control extends WP_Customize_Control {
+    public $type = 'folkphotography_info';
+
+    public function render_content() {
+        ?>
+        <div style="
+            background: #1a1a1a;
+            border-left: 3px solid #2271b1;
+            padding: 10px 12px;
+            border-radius: 0 3px 3px 0;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #ccc;
+        ">
+            <?php echo wp_kses_post( $this->description ); ?>
+        </div>
+        <?php
+    }
+}
+
+/**
  * Register Customizer settings and controls.
  *
- * Adds a "Hero Image Settings" section under Appearance → Customize with:
- *   - parallax_speed : parallax scroll multiplier (0.1 = slow, 1.0 = fast)
- *
- * Hero images are selected per-image in the Media Library using the
- * "Use in Hero Rotation" checkbox — no category required.
+ * Hero Image section contains:
+ *   - An info panel explaining how to mark images for hero rotation
+ *     (done via checkbox in Media Library, not in the Customizer)
+ *   - A live count of how many images are currently marked
+ *   - parallax_speed control
  */
 function folkphotography_customizer( $wp_customize ) {
+
     $wp_customize->add_section( 'folkphotography_hero', array(
-        'title'       => __( 'Hero Image Settings', 'folkphotography' ),
-        'description' => __( 'To add images to the hero rotation: open any image in Media Library and check "Use in Hero Rotation".', 'folkphotography' ),
-        'priority'    => 30,
+        'title'    => __( 'Hero Image Settings', 'folkphotography' ),
+        'priority' => 30,
     ) );
+
+    // Count how many images are currently marked for hero rotation
+    $hero_count = (int) ( new WP_Query( array(
+        'post_type'      => 'attachment',
+        'post_status'    => 'inherit',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'meta_query'     => array( array(
+            'key'     => '_folk_hero',
+            'value'   => '1',
+            'compare' => '=',
+        ) ),
+    ) ) )->found_posts;
+
+    $media_url   = admin_url( 'upload.php?mode=list' );
+    $count_label = $hero_count === 0
+        ? '<strong style="color:#e87c7c;">No hero images set yet.</strong>'
+        : sprintf( '<strong style="color:#6dbf67;">%d image%s</strong> in hero rotation.', $hero_count, $hero_count === 1 ? '' : 's' );
+
+    $info_html = $count_label
+        . '<br><br>'
+        . 'Hero images are selected per-image in the Media Library — not here.'
+        . '<br><br>'
+        . 'To add or remove images:<br>'
+        . '1. Open <a href="' . esc_url( $media_url ) . '" target="_blank" style="color:#2271b1;">Media Library (list view)</a><br>'
+        . '2. Click any image<br>'
+        . '3. Check or uncheck <em>"Use in homepage hero rotation"</em><br>'
+        . '4. Click Update';
+
+    // Dummy setting required by the Customizer API to attach a control
+    $wp_customize->add_setting( 'hero_info_placeholder', array(
+        'sanitize_callback' => '__return_empty_string',
+    ) );
+
+    $wp_customize->add_control( new Folkphotography_Info_Control( $wp_customize, 'hero_info_placeholder', array(
+        'section'     => 'folkphotography_hero',
+        'description' => $info_html,
+        'priority'    => 1,
+    ) ) );
 
     $wp_customize->add_setting( 'parallax_speed', array(
         'default'           => 0.5,
@@ -170,6 +233,7 @@ function folkphotography_customizer( $wp_customize ) {
         'description' => __( '0.1 = very slow, 0.5 = default, 1.0 = fast', 'folkphotography' ),
         'section'     => 'folkphotography_hero',
         'type'        => 'number',
+        'priority'    => 10,
         'input_attrs' => array(
             'min'  => 0.1,
             'max'  => 1.0,
