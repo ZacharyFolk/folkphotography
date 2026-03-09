@@ -97,6 +97,7 @@ add_action( 'manage_media_custom_column', function ( $column_name, $attachment_i
 add_action( 'admin_head-upload.php', function () {
     ?>
     <style>
+        /* List view columns */
         .column-folk_usage      { width: 180px; }
         .folk-badge             { display: inline-block; font-size: 10px; font-weight: 600;
                                   padding: 2px 7px; border-radius: 3px; margin-bottom: 5px;
@@ -106,6 +107,44 @@ add_action( 'admin_head-upload.php', function () {
         .folk-post-link em      { color: #999; font-style: normal; }
         .folk-no-post           { color: #999; font-size: 12px; }
         .folk-overflow          { display: block; color: #999; font-size: 11px; }
+
+        /* Grid view hero toggle button */
+        .folk-hero-toggle {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 26px;
+            height: 26px;
+            background: rgba(0, 0, 0, 0.55);
+            color: #bbb;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background 0.15s, color 0.15s, opacity 0.15s;
+            padding: 0;
+        }
+        .folk-hero-toggle:hover {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+        }
+        .folk-hero-toggle.is-hero {
+            background: rgba(34, 113, 177, 0.9);
+            color: #fff;
+        }
+        .folk-hero-toggle.is-loading {
+            opacity: 0.4;
+            cursor: wait;
+            pointer-events: none;
+        }
+        /* Keep the button visible on hover even when WP dims the thumbnail */
+        .attachment:focus .folk-hero-toggle,
+        .attachment.selected .folk-hero-toggle { opacity: 1; }
     </style>
     <?php
 } );
@@ -353,4 +392,64 @@ add_action( 'admin_head-edit.php', function () {
         .column-folk_thumb a:hover img { opacity: .8; }
     </style>
     <?php
+} );
+
+// =============================================================================
+// 5. HERO TOGGLE IN MEDIA GRID VIEW
+// =============================================================================
+
+/**
+ * Enqueue the grid-view hero toggle script on the Media Library page.
+ *
+ * Passes the current set of hero attachment IDs to JS so the initial button
+ * state renders without an extra AJAX call.
+ */
+add_action( 'admin_enqueue_scripts', function ( $hook ) {
+    if ( $hook !== 'upload.php' ) {
+        return;
+    }
+
+    global $wpdb;
+    $hero_ids = array_map( 'intval', (array) $wpdb->get_col(
+        "SELECT DISTINCT post_id FROM {$wpdb->postmeta}
+         WHERE meta_key = '_folk_hero' AND meta_value = '1'"
+    ) );
+
+    wp_enqueue_script(
+        'folk-media-grid',
+        get_template_directory_uri() . '/js/media-grid.js',
+        [ 'jquery' ],
+        '1.1',
+        true
+    );
+
+    wp_localize_script( 'folk-media-grid', 'folkMediaGrid', [
+        'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+        'nonce'   => wp_create_nonce( 'folk_hero_toggle' ),
+        'heroIds' => $hero_ids,
+    ] );
+} );
+
+/**
+ * AJAX handler — toggle _folk_hero meta on a single attachment.
+ *
+ * Returns { hero: true|false } indicating the new state.
+ */
+add_action( 'wp_ajax_folk_toggle_hero', function () {
+    check_ajax_referer( 'folk_hero_toggle', 'nonce' );
+
+    if ( ! current_user_can( 'upload_files' ) ) {
+        wp_send_json_error( 'Permission denied', 403 );
+    }
+
+    $id = isset( $_POST['attachment_id'] ) ? (int) $_POST['attachment_id'] : 0;
+    if ( ! $id || get_post_type( $id ) !== 'attachment' ) {
+        wp_send_json_error( 'Invalid attachment ID' );
+    }
+
+    $current   = get_post_meta( $id, '_folk_hero', true );
+    $new_value = $current === '1' ? '' : '1';
+    update_post_meta( $id, '_folk_hero', $new_value );
+
+    wp_send_json_success( [ 'hero' => $new_value === '1' ] );
 } );
