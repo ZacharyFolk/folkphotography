@@ -4,15 +4,17 @@ A dark, minimalist photo-centric WordPress theme featuring fullscreen hero image
 
 ## Features
 
-- **Fullscreen Hero Images**: Display random hero images from a selected category on the homepage
+- **Fullscreen Hero Images**: Random hero rotation — mark any image in the Media Library with the "Hero Rotation" checkbox; no category required
 - **Parallax Scrolling**: Smooth parallax effect as users scroll down from the hero section
 - **Dark Theme**: Elegant dark color scheme optimized for photography
 - **Minimalistic Navigation**: Clean, unobtrusive header that adapts to scrolling
 - **Responsive Design**: Mobile-friendly layout that works on all devices
 - **WooCommerce Support**: Full integration with WooCommerce for selling prints and products
 - **Integration with I-Was-Here Plugin**: Works seamlessly with photo metadata and location data
-- **WordPress Block Editor Support**: Full compatibility with Gutenberg
-- **Customizable**: Theme customizer options for hero category and parallax speed
+- **Custom Gutenberg Block**: `folkphotography/masonry-gallery` — drop a masonry photo grid anywhere in a post or page, with category picker, column count, and GLightbox integration
+- **Five Custom Widgets**: Recent Portfolio, Category Gallery, Photo Location Map, Camera & Photography Stats, Random Category Photos
+- **Masonry Gallery Page Template**: Full-page masonry grid with type and category filtering
+- **Customizable**: Theme customizer options for parallax speed
 
 ## Installation
 
@@ -24,10 +26,15 @@ A dark, minimalist photo-centric WordPress theme featuring fullscreen hero image
 
 ### Hero Image Setup
 
-1. Navigate to **Appearance > Customize > Hero Image Settings**
-2. Select a category that contains images you want to use as hero backgrounds
-3. Adjust the parallax speed (0.1 = slow, 1 = fast)
-4. The theme will randomly select an image from that category on each page load
+Hero images are selected per-image in the Media Library — no category required.
+
+1. Go to **Media > Library** (list view)
+2. Click any image to open its edit panel
+3. Check **"Use in homepage hero rotation"** and click Update
+4. Repeat for as many images as you want in the rotation (5–20 recommended)
+5. Go to **Appearance > Customize > Hero Image Settings** to adjust parallax speed (0.1 = slow, 1.0 = fast)
+
+The theme picks a random marked image on each page load. The Customizer panel shows a live count of how many images are currently in rotation.
 
 ### Menu Setup
 
@@ -39,22 +46,29 @@ A dark, minimalist photo-centric WordPress theme featuring fullscreen hero image
 
 ```
 folkphotography/
+├── style.css                        # Theme header (version here) + all styles
+├── functions.php                    # Enqueues, CPT/taxonomy registration, widget areas, includes
+├── front-page.php                   # Homepage template (hero + widget areas)
+├── header.php                       # Site header and navigation
+├── footer.php                       # Site footer
+├── index.php                        # Blog/archive fallback template
+├── single.php                       # Single post template
+├── page.php                         # Standard page template
+├── 404.php                          # 404 error page
+├── inc/
+│   ├── widgets.php                  # All 5 custom widget classes
+│   ├── blocks.php                   # Gutenberg block registration + render callbacks
+│   └── media-admin.php              # Admin media library enhancements (hero toggle, filters)
 ├── js/
-│   └── main.js              # Parallax and navigation JavaScript
+│   ├── main.js                      # Parallax, header scroll, mobile menu, GLightbox init
+│   ├── block-masonry-gallery.js     # Editor JS for folkphotography/masonry-gallery block
+│   └── media-grid.js                # Media Library grid enhancements
+├── page-templates/
+│   └── masonry-gallery.php          # Masonry Gallery page template (CSS columns, filtering)
 ├── template-parts/
-│   └── content.php          # Post excerpt template
-├── woocommerce/
-│   └── archive-product.php  # WooCommerce shop page template
-├── 404.php                  # 404 error page
-├── footer.php               # Site footer
-├── front-page.php           # Homepage with hero section
-├── functions.php            # Theme functions and setup
-├── header.php               # Site header and navigation
-├── index.php                # Main template file
-├── page.php                 # Page template
-├── single.php               # Single post template
-├── style.css                # Main stylesheet
-└── README.md                # This file
+│   └── content.php                  # Post excerpt partial
+└── woocommerce/
+    └── archive-product.php          # WooCommerce shop page override
 ```
 
 ## Customization

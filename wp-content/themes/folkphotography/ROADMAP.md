@@ -149,3 +149,8 @@
 - [x] Homepage fixed — documented Settings → Reading setup correctly — 2026-03-03
 - [x] GETTING-STARTED.md rewritten with explicit homepage setup instructions — 2026-03-03
 - [x] ROADMAP.md created — 2026-03-03
+- [x] Hero image system refactored — per-image checkbox in Media Library replaces category-based selection; Customizer panel shows live count — 2026-05
+- [x] Media Library admin enhancements — filter options, hero toggle in grid view, thumbnail column in post list — 2026-05
+- [x] CSS columns masonry refactor — replaced JS absolute-positioning with pure CSS `column-count`; inline script removed from template — 2026-05
+- [x] Masonry Gallery Gutenberg block (`folkphotography/masonry-gallery`) — category picker, columns 2–4, count 4–30, server-side rendered, GLightbox + EXIF — 2026-05
+- [x] Random Category Photos widget — masonry / grid / strip layouts, randomized via `orderby: rand`, GLightbox + EXIF in lightbox description — 2026-05

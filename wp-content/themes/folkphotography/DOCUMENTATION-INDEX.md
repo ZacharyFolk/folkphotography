@@ -8,12 +8,18 @@ This theme includes comprehensive documentation to help you get started and main
 
 1. **[README.md](README.md)** - Theme overview and features
 2. **[GETTING-STARTED.md](GETTING-STARTED.md)** - Initial setup guide
-3. **[NEW-FEATURES.md](NEW-FEATURES.md)** - Latest features guide (v1.1.0)
+3. **[NEW-FEATURES.md](NEW-FEATURES.md)** - Features guide (v1.1.0 widgets + templates)
 4. **[CHANGELOG.md](CHANGELOG.md)** - Version history
 5. **[WORKFLOW-GUIDE.md](WORKFLOW-GUIDE.md)** - Daily workflow & productivity system ⭐
 6. **[IMAGE-METADATA-GUIDE.md](IMAGE-METADATA-GUIDE.md)** - EXIF preservation guide ⭐
-7. **[CODE-REVIEW-FIXES.md](CODE-REVIEW-FIXES.md)** - Code review fixes (v1.1.1) ⭐ NEW
-8. **[ASSIGNING-CATEGORIES.md](ASSIGNING-CATEGORIES.md)** - How to assign categories to images ⭐ NEW
+7. **[CODE-REVIEW-FIXES.md](CODE-REVIEW-FIXES.md)** - Code review fixes (v1.1.1)
+8. **[ASSIGNING-CATEGORIES.md](ASSIGNING-CATEGORIES.md)** - How to assign categories to images
+
+### **v1.2.0 Additions**
+
+- **Masonry Gallery Block** — Gutenberg block (`folkphotography/masonry-gallery`): drop a masonry grid anywhere in the editor. Source taxonomy, category, column count (2–4), and photo count configurable via the sidebar panel. Server-side rendered with GLightbox + EXIF.
+- **Random Category Photos Widget** — fifth custom widget; pulls randomized photos from a chosen taxonomy term in masonry, grid, or strip layout. GLightbox with EXIF in lightbox description.
+- **CSS Columns Masonry Refactor** — replaced JS absolute-positioning layout with pure CSS `column-count`. Inline `<script>` removed from the gallery template entirely. Column count controllable via `--masonry-cols` CSS custom property.
 
 ### **Quick Reference**
 
@@ -187,9 +193,9 @@ folkphotography/
 
 ---
 
-**Last Updated:** February 2026  
-**Current Version:** 1.1.0  
-**Documentation Status:** Complete
+**Last Updated:** May 2026  
+**Current Version:** 1.2.0  
+**Documentation Status:** Current
 
 ---
 
