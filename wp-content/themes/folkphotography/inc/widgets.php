@@ -632,6 +632,209 @@ class FolkPhoto_Camera_Stats_Widget extends WP_Widget
 }
 
 /**
+ * Random Category Photos Widget
+ *
+ * Displays a randomised set of photos from a chosen taxonomy term.
+ * Image source: featured image of each queried post.
+ * Supports masonry, grid, and strip layouts.
+ */
+class FolkPhoto_Random_Category_Widget extends WP_Widget
+{
+    public function __construct()
+    {
+        parent::__construct(
+            'folkphoto_random_category',
+            __( 'Random Category Photos', 'folkphotography' ),
+            array( 'description' => __( 'Display random photos from a selected category in masonry, grid, or strip layout.', 'folkphotography' ) )
+        );
+    }
+
+    public function widget( $args, $instance )
+    {
+        $title    = apply_filters( 'widget_title', $instance['title'] ?? '' );
+        $taxonomy = $instance['taxonomy'] ?? 'portfolio_category';
+        $term_id  = absint( $instance['term_id'] ?? 0 );
+        $layout   = $instance['layout'] ?? 'masonry';
+        $count    = absint( $instance['count'] ?? 8 );
+
+        echo $args['before_widget'];
+
+        if ( $title ) {
+            echo $args['before_title'] . esc_html( $title ) . $args['after_title'];
+        }
+
+        $post_type = in_array( $taxonomy, array( 'portfolio_category', 'portfolio_tag' ), true ) ? 'portfolio' : 'post';
+
+        // Fetch more than needed to account for posts without thumbnails.
+        $query_args = array(
+            'post_type'      => $post_type,
+            'post_status'    => 'publish',
+            'posts_per_page' => $count * 3,
+            'orderby'        => 'rand',
+            'meta_key'       => '_thumbnail_id',
+            'meta_compare'   => 'EXISTS',
+        );
+
+        if ( $term_id ) {
+            $query_args['tax_query'] = array( array(
+                'taxonomy' => $taxonomy,
+                'field'    => 'term_id',
+                'terms'    => $term_id,
+            ) );
+        }
+
+        $query = new WP_Query( $query_args );
+
+        if ( ! $query->have_posts() ) {
+            echo '<p class="no-results">' . esc_html__( 'No photos found.', 'folkphotography' ) . '</p>';
+            echo $args['after_widget'];
+            return;
+        }
+
+        if ( 'masonry' === $layout ) {
+            echo '<div class="masonry-grid folk-random-masonry">';
+        } elseif ( 'grid' === $layout ) {
+            echo '<div class="category-gallery-grid grid-columns-3 folk-random-grid">';
+        } else {
+            echo '<div class="folk-random-strip">';
+        }
+
+        $shown = 0;
+        while ( $query->have_posts() && $shown < $count ) {
+            $query->the_post();
+            if ( ! has_post_thumbnail() ) {
+                continue;
+            }
+
+            $post_id    = get_the_ID();
+            $thumb_id   = get_post_thumbnail_id();
+            $thumb_url  = get_the_post_thumbnail_url( $post_id, 'large' );
+            $title_str  = get_the_title();
+            $desc_class = 'glightbox-rdesc-' . $post_id;
+
+            if ( 'masonry' === $layout ) {
+                echo '<article class="masonry-item">';
+            } elseif ( 'grid' === $layout ) {
+                echo '<div class="gallery-item">';
+            } else {
+                echo '<div class="strip-item">';
+            }
+
+            echo '<a href="' . esc_url( $thumb_url ) . '" ';
+            echo 'class="glightbox" ';
+            echo 'data-gallery="folk-rand-cat-widget" ';
+            echo 'data-glightbox="title: ' . esc_attr( $title_str ) . '; description: .' . esc_attr( $desc_class ) . '">';
+            the_post_thumbnail( 'portfolio-medium' );
+            echo '</a>';
+
+            // Hidden EXIF + permalink for lightbox description
+            $camera  = get_post_meta( $thumb_id, '_iwh_model', true );
+            $lens    = get_post_meta( $thumb_id, '_iwh_lens', true );
+            $ap      = get_post_meta( $thumb_id, '_iwh_aperture', true );
+            $shutter = get_post_meta( $thumb_id, '_iwh_shutter_speed', true );
+            $iso     = get_post_meta( $thumb_id, '_iwh_iso', true );
+
+            echo '<div class="glightbox-desc ' . esc_attr( $desc_class ) . '" style="display:none;">';
+            if ( $camera || $lens || $ap ) {
+                echo '<div class="exif-data">';
+                if ( $camera ) {
+                    echo '<p><strong>' . esc_html__( 'Camera:', 'folkphotography' ) . '</strong> ' . esc_html( $camera ) . '</p>';
+                }
+                if ( $lens ) {
+                    echo '<p><strong>' . esc_html__( 'Lens:', 'folkphotography' ) . '</strong> ' . esc_html( $lens ) . '</p>';
+                }
+                if ( $ap || $shutter || $iso ) {
+                    $parts = array();
+                    if ( $ap )      $parts[] = 'f/' . $ap;
+                    if ( $shutter ) $parts[] = $shutter;
+                    if ( $iso )     $parts[] = 'ISO ' . $iso;
+                    echo '<p><strong>' . esc_html__( 'Settings:', 'folkphotography' ) . '</strong> ' . esc_html( implode( ' • ', $parts ) ) . '</p>';
+                }
+                echo '</div>';
+            }
+            echo '<a href="' . esc_url( get_the_permalink() ) . '" class="view-post-link">' . esc_html__( 'View Full Post →', 'folkphotography' ) . '</a>';
+            echo '</div>';
+
+            echo ( 'masonry' === $layout ) ? '</article>' : '</div>';
+            $shown++;
+        }
+        wp_reset_postdata();
+
+        echo '</div>';
+        echo $args['after_widget'];
+    }
+
+    public function form( $instance )
+    {
+        $title    = $instance['title'] ?? '';
+        $taxonomy = $instance['taxonomy'] ?? 'portfolio_category';
+        $term_id  = absint( $instance['term_id'] ?? 0 );
+        $layout   = $instance['layout'] ?? 'masonry';
+        $count    = absint( $instance['count'] ?? 8 );
+
+        $terms = get_terms( array( 'taxonomy' => $taxonomy, 'hide_empty' => true ) );
+        ?>
+        <p>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'folkphotography' ); ?></label>
+            <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text"
+                value="<?php echo esc_attr( $title ); ?>">
+        </p>
+        <p>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'taxonomy' ) ); ?>"><?php esc_html_e( 'Taxonomy:', 'folkphotography' ); ?></label>
+            <select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'taxonomy' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'taxonomy' ) ); ?>">
+                <option value="portfolio_category" <?php selected( $taxonomy, 'portfolio_category' ); ?>><?php esc_html_e( 'Portfolio Categories', 'folkphotography' ); ?></option>
+                <option value="category" <?php selected( $taxonomy, 'category' ); ?>><?php esc_html_e( 'Blog Categories', 'folkphotography' ); ?></option>
+            </select>
+        </p>
+        <p>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'term_id' ) ); ?>"><?php esc_html_e( 'Category:', 'folkphotography' ); ?></label>
+            <select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'term_id' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'term_id' ) ); ?>">
+                <option value="0"><?php esc_html_e( 'All', 'folkphotography' ); ?></option>
+                <?php if ( ! is_wp_error( $terms ) ) : foreach ( $terms as $term ) : ?>
+                    <option value="<?php echo esc_attr( $term->term_id ); ?>" <?php selected( $term_id, $term->term_id ); ?>>
+                        <?php echo esc_html( $term->name ); ?>
+                    </option>
+                <?php endforeach; endif; ?>
+            </select>
+        </p>
+        <p>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'layout' ) ); ?>"><?php esc_html_e( 'Layout:', 'folkphotography' ); ?></label>
+            <select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'layout' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'layout' ) ); ?>">
+                <option value="masonry" <?php selected( $layout, 'masonry' ); ?>><?php esc_html_e( 'Masonry', 'folkphotography' ); ?></option>
+                <option value="grid"    <?php selected( $layout, 'grid' ); ?>><?php esc_html_e( 'Grid (3 col)', 'folkphotography' ); ?></option>
+                <option value="strip"   <?php selected( $layout, 'strip' ); ?>><?php esc_html_e( 'Horizontal Strip', 'folkphotography' ); ?></option>
+            </select>
+        </p>
+        <p>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"><?php esc_html_e( 'Number of photos:', 'folkphotography' ); ?></label>
+            <input class="tiny-text" id="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'count' ) ); ?>"
+                type="number" step="1" min="2" max="20"
+                value="<?php echo esc_attr( $count ); ?>" size="3">
+        </p>
+        <?php
+    }
+
+    public function update( $new_instance, $old_instance )
+    {
+        $allowed_layouts   = array( 'masonry', 'grid', 'strip' );
+        $allowed_taxonomies = array( 'portfolio_category', 'category' );
+
+        $instance             = array();
+        $instance['title']    = sanitize_text_field( $new_instance['title'] ?? '' );
+        $instance['taxonomy'] = in_array( $new_instance['taxonomy'] ?? '', $allowed_taxonomies, true ) ? $new_instance['taxonomy'] : 'portfolio_category';
+        $instance['term_id']  = absint( $new_instance['term_id'] ?? 0 );
+        $instance['layout']   = in_array( $new_instance['layout'] ?? '', $allowed_layouts, true ) ? $new_instance['layout'] : 'masonry';
+        $instance['count']    = max( 2, min( 20, absint( $new_instance['count'] ?? 8 ) ) );
+        return $instance;
+    }
+}
+
+/**
  * Register Widgets
  */
 function folkphotography_register_widgets()
@@ -640,5 +843,6 @@ function folkphotography_register_widgets()
     register_widget('FolkPhoto_Category_Gallery_Widget');
     register_widget('FolkPhoto_Location_Map_Widget');
     register_widget('FolkPhoto_Camera_Stats_Widget');
+    register_widget('FolkPhoto_Random_Category_Widget');
 }
 add_action('widgets_init', 'folkphotography_register_widgets');

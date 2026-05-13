@@ -1,6 +1,6 @@
 <?php
 
-define( 'FOLKPHOTO_VERSION', '1.1.5' );
+define( 'FOLKPHOTO_VERSION', '1.2.0' );
 
 // =============================================================================
 // THEME SETUP
@@ -491,4 +491,5 @@ add_action( 'init', 'folkphotography_register_taxonomies' );
 // =============================================================================
 
 require_once get_template_directory() . '/inc/widgets.php';
+require_once get_template_directory() . '/inc/blocks.php';
 require_once get_template_directory() . '/inc/media-admin.php';
