@@ -1,31 +1,22 @@
 # Quick Start Checklist
 
-## ✅ Your First 24 Hours with FolkPhotography Theme
-
-Use this checklist to get started quickly. Check off each item as you complete it.
+Use this checklist to get set up and start publishing. Work through the phases in order — each one builds on the last.
 
 ---
 
-## Hour 1: Setup (30 minutes)
+## Phase 1: Theme & WordPress Setup
 
-### Theme Activation
-- [ ] Activate FolkPhotography theme (Appearance → Themes)
-- [ ] Verify theme is active (check frontend)
-- [ ] No errors? Great! Continue.
+### Activate & Verify
+- [ ] Appearance → Themes → Activate "FolkPhotography"
+- [ ] Visit the frontend — no errors, theme is loading
 
-### Read Core Documentation
-- [ ] Scan README.md (5 min overview)
-- [ ] Read GETTING-STARTED.md Phase 1 (setup basics)
-- [ ] Bookmark WORKFLOW-GUIDE.md (daily system)
-- [ ] Skim IMAGE-METADATA-GUIDE.md (metadata issues)
-
----
-
-## Hour 2: Basic Configuration (30 minutes)
+### Create Required Pages
+- [ ] Pages → Add New → Title: `Home` → leave body blank → Publish
+- [ ] Pages → Add New → Title: `Journal` → leave body blank → Publish
+- [ ] Settings → Reading → "A static page" → Homepage: `Home`, Posts page: `Journal` → Save
 
 ### Create Categories
-Go to **Posts → Categories**, create these:
-
+Go to **Posts → Categories** and create your main subjects:
 - [ ] Astro Photography
 - [ ] Wildlife & Birds
 - [ ] Street Photography
@@ -33,307 +24,141 @@ Go to **Posts → Categories**, create these:
 - [ ] Portraits
 - [ ] Travel
 - [ ] Landscape
-- [ ] Film/Holga (if applicable)
+- [ ] Film/Holga *(if applicable)*
 
-### Configure Hero
-- [ ] Appearance → Customize → Hero Image Settings
-- [ ] Create category: "Hero Images" or "Featured"
-- [ ] Select that category in customizer
-- [ ] Save
-
-**Note:** You'll upload hero images tomorrow
-
-### Create Main Menu
+### Create Navigation Menu
 - [ ] Appearance → Menus → Create "Primary Menu"
-- [ ] Add: Home, Portfolio, Blog, About, Contact
-- [ ] Assign to "Primary Menu" location
-- [ ] Save
+- [ ] Add pages: Home, Portfolio, Journal, Prints, About, Contact
+- [ ] Assign to "Primary Menu" location → Save
 
 ---
 
-## Hour 3: Fix Metadata Workflow (30 minutes)
+## Phase 2: Fix Metadata Before Uploading
 
-### DxO PhotoLab Users
-- [ ] Open DxO PhotoLab
+**Do this before uploading any images.** EXIF data (camera, GPS, settings) must be preserved on export or it's gone.
+
+### DxO PhotoLab
 - [ ] File → Export → File Options
-- [ ] ✅ Check "Keep EXIF data"
-- [ ] ✅ Check "Preserve GPS coordinates"
-- [ ] Save as preset: "Web Upload - Keep Metadata"
-- [ ] Test export one image
-- [ ] Verify metadata preserved (right-click → Properties)
+- [ ] Check "Keep EXIF data" and "Preserve GPS coordinates"
+- [ ] Save as a preset: "Web Upload - Keep Metadata"
+- [ ] Test export one image → verify metadata with right-click → Properties
 
-### Photoshop Users
-- [ ] Open Photoshop
-- [ ] File → File Info (check EXIF exists)
-- [ ] File → Save As (not Save for Web)
-- [ ] ✅ Check "Embed Color Profile"
-- [ ] Create action if desired
-- [ ] Test export one image
+### Photoshop
+- [ ] Use File → Save As (not Save for Web)
+- [ ] Check "Embed Color Profile"
+- [ ] Verify EXIF survives: File → File Info before and after
 
-**✅ This is critical - don't skip!**
+See IMAGE-METADATA-GUIDE.md for full detail on any export tool.
 
 ---
 
-## Hour 4: First Uploads (30 minutes)
+## Phase 3: First Upload & Hero Setup
 
-### Upload First 5 Images
-- [ ] Pick 5 images from any folder
-- [ ] Process/export using metadata preset
-- [ ] Media → Add New
-- [ ] Drag all 5 images
-- [ ] While uploading, prepare categories
+### Upload Images
+- [ ] Media → Add New → drag in your first batch of images
+- [ ] For each image: add a title, select one category, add 2–3 tags → Update
 
-### Categorize & Tag
-For each image:
-- [ ] Add descriptive title
-- [ ] Select ONE category
-- [ ] Add 2-3 tags
-- [ ] Click "Update"
+### Mark Hero Images
+- [ ] Switch Media Library to **List view**
+- [ ] Open each of your best landscape-oriented shots → check **"Use in homepage hero rotation"** → Update
+- [ ] Aim for 5–10 images in rotation
 
-### Verify Upload
-- [ ] View one in Media Library
-- [ ] Check for camera info
-- [ ] Check for GPS (if applicable)
-- [ ] All good? Continue!
+### Configure Hero Speed
+- [ ] Appearance → Customize → Hero Image Settings → set parallax speed (0.5 is a good default) → Save & Publish
+
+### Verify
+- [ ] Visit the homepage — hero should be rotating
+- [ ] Open one image in Media Library — camera info and GPS should be populated by the i-was-here plugin
 
 ---
 
-## Day 1 Complete! 🎉
+## Phase 4: Build the Homepage
 
-**What You've Accomplished:**
-- ✅ Theme activated and configured
-- ✅ Categories created
-- ✅ Menu set up
-- ✅ Metadata workflow fixed
-- ✅ First 5 images uploaded
+Go to **Appearance → Widgets** and add to the three homepage widget areas:
 
-**Tomorrow:**
-- Upload 3-5 more images
-- Add Location Map widget
-- Add Camera Stats widget
-- Create first portfolio collection
+- [ ] **Homepage - After Hero:** Add **Recent Portfolio Items** — Title: "Latest Work", 6 items, 3 columns
+- [ ] **Homepage - Featured Section:** Add **Camera & Photography Stats** — Title: "By The Numbers"
+- [ ] **Homepage - Gallery Grid:** Add **Category Gallery** or **Random Category Photos** — pick a category, 9 items
+
+You can also add the **Photo Location Map** widget once you have GPS-tagged photos uploaded.
 
 ---
 
-## Week 1: Build Momentum
+## Phase 5: First Content
 
-### Daily (Monday-Friday)
-- [ ] Mon: Upload 3-5 images (Travel category)
-- [ ] Tue: Upload 3-5 images (Street category)
-- [ ] Wed: Upload 3-5 images (Wildlife category)
-- [ ] Thu: Upload 3-5 images (Astro category)
-- [ ] Fri: Upload 3-5 images (Any category)
+### Upload More Photos
+- [ ] Upload photos across several categories
+- [ ] Set a featured image on each post or portfolio item — this is what shows in grids and lightboxes
 
-**Week 1 Goal: 20-25 images total**
+### Write a Journal Post
+- [ ] Posts → Add New
+- [ ] Write about a shoot — inline images, narrative, categories, tags
+- [ ] Visit `/journal/` and verify it appears with the category filter bar
 
-### Wednesday: Add Widgets
-- [ ] Appearance → Widgets
-- [ ] Add "Photo Location Map" to Homepage - Gallery Grid
-- [ ] Add "Camera & Photography Stats" to Homepage - Featured
-- [ ] Add "Recent Portfolio" to Homepage - After Hero
-- [ ] Configure each widget
-- [ ] Save
+### Create a Portfolio Item
+- [ ] Portfolio → Add New
+- [ ] Title: something specific — e.g. "Macro: Forest Floor", "Black & White Street Series"
+- [ ] Write a short excerpt (1–2 sentences — shows in the lightbox preview on the archive)
+- [ ] Body: insert a **Gallery block** → add your curated selection of images
+- [ ] Set a **featured image** (appears in the `/portfolio/` masonry grid)
+- [ ] Assign a **Portfolio Category** (controls filter buttons on the archive)
+- [ ] Publish → visit `/portfolio/` to confirm it appears in the grid
 
-### Friday: Create Masonry Page
-- [ ] Pages → Add New
-- [ ] Title: "Gallery" or "Portfolio"
-- [ ] Template: Select "Masonry Gallery"
-- [ ] Add intro text
-- [ ] Publish
-
-### Sunday: Week Review
-- [ ] Count total uploads (should be 20-25)
-- [ ] Check camera stats widget (data showing?)
-- [ ] Check location map (pins appearing?)
-- [ ] Plan next week
+### Verify the Portfolio Archive
+- [ ] Click a category filter button — filtered view works
+- [ ] Click an item → lightbox opens with excerpt and "View Full Portfolio Item" link
+- [ ] Follow the link → full single-portfolio page with hero, gallery, EXIF panel
 
 ---
 
-## Week 2: Establish Routine
+## Phase 6: Optional Setup
 
-### Daily Uploads
-- [ ] Upload 3-5 images every weekday
-- [ ] Use 15-minute daily system (see WORKFLOW-GUIDE.md)
-- [ ] Track progress
-
-**Week 2 Goal: 20 more images (Total: 40-45)**
-
-### Sunday: Create First Portfolio
-- [ ] Posts → Portfolio → Add New
-- [ ] Title: "[Month] Highlights"
-- [ ] Select 10-15 best images from past 2 weeks
-- [ ] Add to gallery
-- [ ] Write description
-- [ ] Set featured image
-- [ ] Publish
-
-### Check Widgets
-- [ ] Location map has multiple pins?
-- [ ] Camera stats show accurate data?
-- [ ] Portfolio widget shows your collection?
+- [ ] Create an "About" page — write it like a human, include a photo
+- [ ] Create a "Contact" page — email link or contact form
+- [ ] Create a "Gallery" page → assign **Masonry Gallery** template (shows a mixed browse grid of all posts + portfolio items)
+- [ ] WooCommerce: add your first print product if selling
 
 ---
 
-## Week 3: Optimize & Customize
+## Ongoing Rhythm
 
-### Daily Uploads Continue
-- [ ] 3-5 images per day
-- [ ] Focus on variety of categories
+Once you're set up, the workflow is simple:
 
-**Week 3 Goal: 20 more images (Total: 60-65)**
+- **Uploading:** Export with metadata preserved → upload → title, category, tags → done
+- **Journal:** Write posts when you have a story to tell — a shoot, a trip, a technique
+- **Portfolio:** When a body of work feels strong enough to stand alone, make a portfolio item — curate the best shots, write an excerpt, publish
+- **Widgets:** Update widget categories as your library grows
 
-### Customize Homepage
-- [ ] Experiment with widget order
-- [ ] Adjust map height
-- [ ] Change widget titles
-- [ ] Preview on mobile
-
-### Scan Film (Optional)
-- [ ] Pick ONE roll from priority stack
-- [ ] Scan at medium quality
-- [ ] Quick process in DxO
-- [ ] Upload throughout week
+See WORKFLOW-GUIDE.md for a more detailed system if you want one.
 
 ---
 
-## Week 4: Review & Plan
+## Troubleshooting
 
-### Daily Uploads
-- [ ] Maintain 3-5 per day
-- [ ] Should feel natural now
+**Metadata stripped from uploads**
+→ Fix export settings first — see IMAGE-METADATA-GUIDE.md
 
-**Week 4 Goal: 20 more images (Total: 80-85)**
+**Location map empty**
+→ Check photos have GPS data → Tools → i-was-here Scanner to reprocess
 
-### Month-End Review
-- [ ] Total images uploaded: _____
-- [ ] Categories with most uploads: _____
-- [ ] Favorite camera/lens (from stats): _____
-- [ ] GPS locations count: _____
-- [ ] Portfolio collections created: _____
+**Hero not showing**
+→ Confirm at least one image is checked "Use in homepage hero rotation" in the Media Library (list view)
 
-### Set Month 2 Goals
-- [ ] Target uploads: _____ (aim for 100)
-- [ ] Scanning projects: _____
-- [ ] Portfolio themes: _____
+**Portfolio archive empty**
+→ Check that portfolio items are Published and have a featured image set
 
 ---
 
-## 30-Day Goals
+## Documentation
 
-By end of Month 1, you should have:
-- ✅ 80-100 images uploaded
-- ✅ All categories in use
-- ✅ 1-2 portfolio collections
-- ✅ Location map showing multiple pins
-- ✅ Camera stats displaying real data
-- ✅ Masonry gallery page published
-- ✅ Daily upload routine established
+| File | What's in it |
+|---|---|
+| GETTING-STARTED.md | Full setup guide with explanations |
+| WORKFLOW-GUIDE.md | Ongoing upload and curation system |
+| IMAGE-METADATA-GUIDE.md | Preserving EXIF through any export tool |
+| ROADMAP.md | What's built, what's next |
 
 ---
 
-## Ongoing Maintenance
-
-### Daily (15 minutes)
-- [ ] Upload 3-5 images
-- [ ] Categorize and tag
-- [ ] Quick metadata check
-
-### Weekly (30 minutes - Sunday)
-- [ ] Review week's uploads
-- [ ] Organize one folder on computer
-- [ ] Plan next week's batch
-- [ ] Optional: Scan one film roll
-
-### Monthly (60 minutes - First Sunday)
-- [ ] Create portfolio collection
-- [ ] Review stats
-- [ ] Set next month goals
-- [ ] Celebrate progress!
-
----
-
-## Troubleshooting Quick Reference
-
-### Issue: Metadata stripped from uploads
-→ Read: IMAGE-METADATA-GUIDE.md
-→ Fix: DxO/Photoshop export settings
-
-### Issue: Location map empty
-→ Check: Photos have GPS data
-→ Run: Tools → i-was-here Scanner
-
-### Issue: Feeling overwhelmed
-→ Read: WORKFLOW-GUIDE.md "Dealing with Overwhelm"
-→ Fix: Reduce to 1 image per day
-
-### Issue: Don't know what to upload
-→ Solution: Upload first 5 you see
-→ Read: WORKFLOW-GUIDE.md "Decision-Making Shortcuts"
-
----
-
-## Documentation Quick Access
-
-**For Setup:**
-- GETTING-STARTED.md
-
-**For Daily Work:**
-- WORKFLOW-GUIDE.md
-
-**For Metadata Issues:**
-- IMAGE-METADATA-GUIDE.md
-
-**For New Features:**
-- NEW-FEATURES.md
-
-**For Everything Else:**
-- DOCUMENTATION-INDEX.md
-
----
-
-## Success Metrics
-
-### Week 1 Success
-- ✅ 20+ images uploaded
-- ✅ 3+ categories in use
-- ✅ Widgets added to homepage
-- ✅ Metadata preserved
-
-### Month 1 Success
-- ✅ 80+ images uploaded
-- ✅ All categories have images
-- ✅ 1+ portfolio collection
-- ✅ Daily routine established
-- ✅ Site looks populated
-
-### 3-Month Success
-- ✅ 250+ images uploaded
-- ✅ 3+ portfolio collections
-- ✅ Location map has 20+ pins
-- ✅ Camera stats show patterns
-- ✅ Friends can browse your work
-- ✅ Proud to share the URL
-
----
-
-## 🎯 Your Action Item Right Now
-
-**Complete these 3 tasks in the next hour:**
-
-1. [ ] Fix metadata export settings (30 min)
-2. [ ] Upload 3 test images (20 min)
-3. [ ] Verify metadata preserved (10 min)
-
-**Then tomorrow:**
-- [ ] Upload 5 more images
-- [ ] Add widgets to homepage
-- [ ] You're rolling!
-
----
-
-**Start your timer. Let's go! 🚀**
-
----
-
-**Last Updated:** February 2026
-**Quick Start Version:** 1.0
+**Last Updated:** May 2026
+**Quick Start Version:** 1.2

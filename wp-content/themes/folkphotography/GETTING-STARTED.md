@@ -116,25 +116,34 @@ Use tags for specifics that can overlap:
 
 ## Content Types Explained
 
-### **Posts** (Blog/Stories)
-- Photo essays with narrative
-- Behind-the-scenes stories
-- Travel journals
-- Use for: Content with story + multiple images
+### **Posts** (Journal / Blog)
+- Photo essays with narrative text
+- Behind-the-scenes stories and shoot diaries
+- Travel journals, technique notes
+- Browsable at `/journal/` — filterable by category and tag
+- Clicking a category (e.g. "Macro") shows all posts in that category using the same journal layout
+- Use for: anything where the writing is as important as the images
 
-### **Portfolio** (NEW! Custom Post Type)
-- Curated collections of your best work
-- Organized by theme/project/series
-- Examples:
-  - "Iceland Adventure 2025"
-  - "Black & White Street Series"
-  - "Dog Portraits Collection"
-  - "Holga Experiments"
+### **Portfolio** (Curated Collections)
+- Your highlight reel — the work you're proud enough to frame and describe
+- Each portfolio item has: a full-bleed hero image, an excerpt, a gallery block body, an EXIF panel, and category/tag links
+- Lives at `/portfolio/` — masonry grid filterable by Portfolio Category
+- Clicking an item opens a lightbox preview; clicking through goes to the full single-portfolio page
+- **How to build one:**
+  1. Portfolio → Add New
+  2. Write a title (specific beats generic: "Macro: Forest Floor" not "Macro Photos")
+  3. Write a short excerpt — this shows in the lightbox preview on the archive
+  4. In the body, insert a **Gallery block** with your curated selection of images
+  5. Set a **featured image** — this is what appears in the `/portfolio/` masonry grid
+  6. Assign a **Portfolio Category** — controls the category filter buttons on the archive page
+  7. Publish
+- **Portfolio vs Journal:** A journal post is a shoot diary — everything from the day, in order, with the story. A portfolio item is the edit — only the strongest shots, presented intentionally. The same images can appear in both; they serve different audiences.
 
-### **Products** (WooCommerce)
+### **Products** (WooCommerce — requires setup)
 - Individual prints for sale
 - Digital downloads
-- Keep separate from Portfolio (can link between them)
+- WooCommerce theme support is built in (dark-styled shop, cart, checkout) but you need to add products manually
+- Keep separate from Portfolio — you can link between them once both exist
 
 ---
 
@@ -143,9 +152,9 @@ Use tags for specifics that can overlap:
 ### **Your Homepage Sections** (Top to Bottom)
 
 1. **Hero Image** (Fullscreen Parallax)
-   - Configure: Appearance → Customize → Hero Image Settings
-   - Select a category (e.g., "Best Work" or "Featured")
-   - Displays random image from that category
+   - Configure speed: Appearance → Customize → Hero Image Settings
+   - Mark images: Media Library (list view) → open any image → check "Use in homepage hero rotation" → Update
+   - Displays a random marked image on each page load — no category needed
 
 2. **Widget Area: After Hero**
    - **Use for:** Recent Portfolio widget
@@ -215,14 +224,12 @@ Instagram
    - Posts → Categories → Add: Astro, Wildlife, Street, Macro, Portraits, Travel, Film/Holga, Landscape
 
 4. **Configure Hero Image**
-   - Create a category called "Hero Images"
    - Upload 5–10 of your best landscape-oriented images to the Media Library
-   - In the Media Library, open each image → assign it to the "Hero Images" category
-     *(Note: the theme registers categories for attachments, so media files can have categories)*
-   - Go to Appearance → Customize → Hero Image Settings
-   - Select "Hero Images" from the dropdown
-   - Set parallax speed (default 0.5 is a good starting point)
-   - Save & Publish
+   - Switch to **List view** in the Media Library
+   - Click each image → check **"Use in homepage hero rotation"** → click Update
+   - Repeat for each hero candidate — the theme picks one at random on each page load
+   - Go to Appearance → Customize → Hero Image Settings → set parallax speed (0.5 is a good default) → Save & Publish
+   - The Customizer panel shows a live count of how many images are currently in rotation
 
 5. **Create Menu**
    - Appearance → Menus → Create "Primary Menu"
@@ -233,11 +240,12 @@ Instagram
 
 The homepage has three widget areas below the hero. Go to **Appearance → Widgets** to build them out. You must have the Reading settings configured (Phase 1, Step 2) before the widgets will display correctly on the front page.
 
-**Available custom widgets for the homepage:**
-- **Recent Portfolio Items** — grid of your Portfolio post type entries
-- **Category Gallery** — grid of post featured images from a specific category (opens in lightbox)
-- **Photo Location Map** — interactive Leaflet map of GPS-tagged photos
-- **Camera & Photography Stats** — auto-generated stats from EXIF data (total photos, favorite camera, lens, etc.)
+**Available custom widgets (five total):**
+- **Recent Portfolio Items** — grid of your latest Portfolio items
+- **Category Gallery** — grid of post featured images from a specific category, opens in lightbox
+- **Photo Location Map** — interactive Leaflet map of all GPS-tagged photos
+- **Camera & Photography Stats** — auto-generated stats from EXIF data (total photos, favorite camera, lens, ISO, location)
+- **Random Category Photos** — randomized photos from a chosen category in masonry, grid, or horizontal strip layout; refreshes on each page load
 
 **Recommended starting configuration:**
 
@@ -344,15 +352,15 @@ This builds a searchable, filterable database of your work.
 - [ ] Activate FolkPhotography theme
 - [ ] Create `Home` page (blank body) and `Journal` page (blank body)
 - [ ] Settings → Reading → set Homepage to `Home`, Posts page to `Journal`
-- [ ] Create main categories (Astro, Wildlife, Street, etc.)
-- [ ] Create "Hero Images" category
-- [ ] Upload 5-10 hero images, assign them to "Hero Images" category in Media Library
-- [ ] Configure hero in Customizer (Appearance → Customize → Hero Image Settings)
+- [ ] Create main categories (Astro, Wildlife, Street, Macro, Portraits, Travel, Film/Holga, Landscape)
+- [ ] Upload 5–10 hero images → in Media Library (list view) check "Use in homepage hero rotation" on each
+- [ ] Appearance → Customize → Hero Image Settings → set parallax speed → Save
 - [ ] Create primary menu (Home, Portfolio, Journal, Prints, About, Contact)
-- [ ] Add homepage widgets (After Hero, Featured, Gallery Grid)
-- [ ] Upload first 10-20 photos with categories and featured images set
-- [ ] Create first Portfolio collection
-- [ ] Set up at least one product (if selling)
+- [ ] Add homepage widgets (After Hero: Recent Portfolio; Featured: Camera Stats; Gallery Grid: Category Gallery or Random Photos)
+- [ ] Upload first 10–20 photos — assign categories, set featured images
+- [ ] Create first Portfolio item (title, excerpt, Gallery block body, featured image, Portfolio Category)
+- [ ] Visit `/portfolio/` to verify the archive grid and single-item page look correct
+- [ ] Set up at least one product in WooCommerce (if selling prints)
 
 ---
 
@@ -373,7 +381,10 @@ A: Three ways, in order of visual priority: (1) Hero image — configured in App
 A: Once you assign a "Posts page" in Settings → Reading, WordPress automatically uses `index.php` to render that page as a blog archive. You never need to edit the Journal page content — WordPress takes over.
 
 **Q: Should I use Posts or Portfolio?**
-A: Posts = stories/blogs with narrative (your Journal). Portfolio = curated collections of your best work, displayed in image grids.
+A: Posts = your Journal — narrative writing with inline photos, shoot diaries, anything where the story matters. Portfolio = curated collections of your strongest images, built with a Gallery block and presented image-first. The same photos can appear in both. The journal is for volume and chronology; the portfolio is for curation and impression.
+
+**Q: How does category filtering on the Journal work?**
+A: The Journal page (`/journal/`) shows a category filter bar at the top. Clicking a category navigates to that category's archive (e.g. `/category/macro/`) which uses the same journal layout with only those posts showing. The active category is highlighted in the filter bar. Tag archives work the same way but don't show filter buttons — just the filtered post list with the tag name in the header.
 
 **Q: How many categories should I use?**
 A: Start with 5-8 main subjects. You can always add more.
