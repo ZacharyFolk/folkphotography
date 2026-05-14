@@ -1,5 +1,30 @@
 # FolkPhotography Theme - Changelog
 
+## Version 1.2.1 - May 2026
+
+### ✨ New Templates
+
+**Portfolio Archive Template** (`archive-portfolio.php`)
+
+Dedicated template for the `/portfolio/` URL — replaces the generic `index.php` fallback. Renders all portfolio items as a masonry grid with `portfolio_category` filtering via `?cat=` query param. Active category shows its name and description in the page header. Each item opens in GLightbox with EXIF data and a "View Full Portfolio Item" link.
+
+**Portfolio Single Template** (`single-portfolio.php`)
+
+Dedicated single-item template for `/portfolio/<slug>/`. Layout:
+- Full-bleed featured image (outside the content wrapper, `hero-desktop` size)
+- Title + category pill links
+- Excerpt
+- Post content / gallery (the actual images/body)
+- EXIF panel (Camera, Lens, Focal Length, Exposure, Location) — only shown when data exists
+- Portfolio tags in footer
+- Prev/next navigation within the same `portfolio_category`
+
+### 🎨 Styles
+
+Added `#PORTFOLIO TEMPLATES` section to `style.css` covering `.portfolio-hero`, `.portfolio-header`, `.portfolio-categories`, `.portfolio-cat-link`, `.portfolio-excerpt`, `.portfolio-exif-panel`, `.exif-list`, `.exif-row`, `.portfolio-footer`, `.tag-link`, post-navigation overrides for single portfolio, and responsive breakpoints at 768px and 480px.
+
+---
+
 ## Version 1.2.0 - May 2026
 
 ### ✨ New Features

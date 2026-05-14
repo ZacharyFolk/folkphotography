@@ -20,6 +20,28 @@
                 <?php endif; ?>
             </header>
 
+            <?php if ( is_home() || is_archive() ) :
+                $all_cats    = get_categories( array( 'hide_empty' => true ) );
+                $current_cat = is_category() ? get_queried_object() : null;
+                $blog_home   = get_option( 'page_for_posts' )
+                    ? get_permalink( absint( get_option( 'page_for_posts' ) ) )
+                    : home_url( '/' );
+                if ( $all_cats ) : ?>
+                <nav class="journal-filters">
+                    <a href="<?php echo esc_url( $blog_home ); ?>"
+                       class="filter-btn <?php echo is_home() ? 'active' : ''; ?>">
+                        <?php esc_html_e( 'All', 'folkphotography' ); ?>
+                    </a>
+                    <?php foreach ( $all_cats as $cat ) : ?>
+                        <a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>"
+                           class="filter-btn <?php echo ( $current_cat && $current_cat->term_id === $cat->term_id ) ? 'active' : ''; ?>">
+                            <?php echo esc_html( $cat->name ); ?>
+                        </a>
+                    <?php endforeach; ?>
+                </nav>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <div class="posts-list">
                 <?php
                 while (have_posts()) :

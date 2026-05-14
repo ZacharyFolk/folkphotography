@@ -6,7 +6,7 @@ Author URI: https://folkphotography.com
 Description: A dark, minimalist photo-centric theme with fullscreen hero images and parallax effects
 Tested up to: 6.5.3
 Requires PHP: 5.6
-Version: 1.2.0
+Version: 1.2.1
 Text Domain: folkphotography
 License: GNU General Public License version 3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -403,6 +403,33 @@ h3 {
 
 .read-more:hover {
     color: var(--accent-hover);
+}
+
+/**********[ #JOURNAL ]**********/
+
+/* Category filter bar on journal home + archive pages */
+.journal-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--grey-dark);
+    margin-bottom: 2rem;
+}
+
+/* Category + tag links in post row meta */
+.entry-cats {
+    margin-left: 1rem;
+    font-size: 0.8rem;
+}
+
+.entry-cats a {
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.entry-cats a:hover {
+    text-decoration: underline;
 }
 
 /* Post navigation */
@@ -1588,5 +1615,293 @@ body::before {
 @media (max-width: 480px) {
     .masonry-grid {
         column-count: 1;
+    }
+}
+
+/**********[ #PORTFOLIO TEMPLATES ]**********/
+
+/* ── Archive: /portfolio/ ─────────────────────────────────────────── */
+
+.portfolio-archive-page .page-header {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--grey-dark);
+    margin-bottom: 0;
+}
+
+.portfolio-archive-page .page-title {
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--white-bright);
+    margin: 0 0 0.75rem;
+}
+
+.archive-description {
+    color: var(--grey-lighter);
+    font-size: 1rem;
+    margin: 0.5rem 0 0;
+    max-width: 640px;
+}
+
+/* ── Single portfolio item ────────────────────────────────────────── */
+
+.single-portfolio {
+    padding-bottom: 4rem;
+}
+
+.portfolio-hero {
+    width: 100%;
+    max-height: 80vh;
+    overflow: hidden;
+    background: var(--grey-darkest);
+}
+
+.portfolio-hero img {
+    width: 100%;
+    height: 100%;
+    max-height: 80vh;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.portfolio-item-content {
+    max-width: 100%;
+}
+
+/* Header: title + category pills */
+.portfolio-header {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--grey-dark);
+    margin-bottom: 2rem;
+}
+
+.portfolio-header .entry-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: var(--white-bright);
+    margin: 0 0 1.25rem;
+}
+
+.portfolio-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.portfolio-cat-link {
+    display: inline-block;
+    padding: 0.3rem 0.9rem;
+    background: var(--grey-darker);
+    border: 1px solid var(--grey-dark);
+    color: var(--grey-lighter);
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.portfolio-cat-link:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--black-pure);
+}
+
+/* Excerpt */
+.portfolio-excerpt {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    color: var(--grey-lighter);
+    max-width: 800px;
+    margin: 0 0 2.5rem;
+}
+
+.portfolio-excerpt p {
+    margin: 0;
+}
+
+/* Post content / gallery */
+.portfolio-gallery {
+    margin-bottom: 3rem;
+}
+
+/* EXIF panel */
+.portfolio-exif-panel {
+    background: var(--grey-darker);
+    border-left: 3px solid var(--accent-primary);
+    border-radius: 0 4px 4px 0;
+    padding: 1.75rem 2rem;
+    margin: 2rem 0 3rem;
+    max-width: 600px;
+}
+
+.portfolio-exif-panel h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+    margin: 0 0 1.25rem;
+}
+
+.exif-list {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.exif-row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.exif-row dt {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--grey-medium);
+}
+
+.exif-row dd {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--white-bright);
+}
+
+/* Tags footer */
+.portfolio-footer {
+    border-top: 1px solid var(--grey-dark);
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+}
+
+.portfolio-footer .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tag-link {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: transparent;
+    border: 1px solid var(--grey-dark);
+    color: var(--grey-lighter);
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.tag-link:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* Post navigation within portfolio */
+.single-portfolio .post-navigation {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--grey-dark);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.single-portfolio .nav-previous,
+.single-portfolio .nav-next {
+    background: var(--grey-darker);
+    padding: 1.25rem 1.5rem;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.single-portfolio .nav-previous:hover,
+.single-portfolio .nav-next:hover {
+    background: var(--grey-dark);
+}
+
+.single-portfolio .nav-next {
+    text-align: right;
+}
+
+.single-portfolio .nav-subtitle {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grey-medium);
+    margin-bottom: 0.3rem;
+}
+
+.single-portfolio .nav-title {
+    font-size: 0.95rem;
+    color: var(--white-bright);
+}
+
+.single-portfolio .post-navigation a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ── Responsive: portfolio templates ──────────────────────────────── */
+
+@media (max-width: 768px) {
+    .portfolio-hero {
+        max-height: 60vh;
+    }
+
+    .portfolio-hero img {
+        max-height: 60vh;
+    }
+
+    .portfolio-header {
+        padding: 2rem 0 1.5rem;
+    }
+
+    .portfolio-header .entry-title {
+        font-size: 1.75rem;
+    }
+
+    .portfolio-exif-panel {
+        max-width: 100%;
+    }
+
+    .exif-row {
+        grid-template-columns: 1fr;
+        gap: 0.15rem;
+    }
+
+    .exif-row dt {
+        font-size: 0.72rem;
+    }
+
+    .single-portfolio .post-navigation {
+        grid-template-columns: 1fr;
+    }
+
+    .single-portfolio .nav-next {
+        text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .portfolio-header .entry-title {
+        font-size: 1.4rem;
+    }
+
+    .portfolio-archive-page .page-title {
+        font-size: 1.5rem;
     }
 }

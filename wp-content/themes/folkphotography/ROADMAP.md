@@ -52,7 +52,8 @@
 
 ### Archive & Discovery
 - [ ] Create `category.php` template — renders photo grid instead of text list when visiting a category archive
-- [ ] Create `archive-portfolio.php` — renders Portfolio archive as grid
+- [x] Create `archive-portfolio.php` — renders Portfolio archive as grid — 2026-05
+- [x] Create `single-portfolio.php` — full-bleed hero, EXIF panel, category pills, prev/next nav — 2026-05
 
 ### Print Shop Improvements
 - [ ] Add print size variations to products (5×7, 8×10, 11×14, 16×20, 24×36)
