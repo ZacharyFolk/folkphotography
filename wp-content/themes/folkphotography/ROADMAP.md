@@ -2,7 +2,7 @@
 
 > Version this file in git. Check off tasks as you complete them. Move items between sections as priorities shift.
 
-**Last updated:** 2026-03-03
+**Last updated:** 2026-05-13
 **Status:** Pre-launch
 
 ---
@@ -15,14 +15,13 @@
 - [ ] Create `Home` page in WordPress (blank body, publish)
 - [ ] Create `Journal` page in WordPress (blank body, publish)
 - [ ] Settings → Reading → set to "A static page", Homepage = `Home`, Posts page = `Journal`
-- [ ] Create primary menu: Home, Gallery, Portfolio, Journal, Prints, About, Contact — assign to "Primary Menu" location
-- [ ] Create `Hero Images` category (Posts → Categories)
+- [ ] Create primary menu: Home, Portfolio, Journal, Prints, About, Contact — assign to "Primary Menu" location
 - [ ] Create main photography categories: Astro, Wildlife, Street, Macro, Portraits, Travel, Film/Holga, Landscape
-- [ ] Appearance → Customize → Hero Image Settings → select "Hero Images" category, set parallax speed
+- [ ] Appearance → Customize → Hero Image Settings → set parallax speed
 
 ### Upload First Hero Images (20 min)
 - [ ] Upload 5–10 best landscape-oriented images to Media Library
-- [ ] Assign each to "Hero Images" category (edit attachment → Categories)
+- [ ] In Media Library (list view), open each image and check **"Use in homepage hero rotation"** — no category needed
 - [ ] Verify hero is showing on homepage
 
 ### Homepage Widgets (20 min)
@@ -66,13 +65,88 @@
 - [ ] Add "Book a Session" WooCommerce product (paid retainer)
 
 ### SEO & Social
-- [ ] Install Yoast SEO or Rank Math (auto-generates sitemaps, OpenGraph, structured data for images)
-- [ ] Add OpenGraph / Twitter Card meta tags so shared posts show featured image in preview
-- [ ] Add image alt text and captions to key photos
+- [ ] Install Rank Math (free) — handles meta descriptions, OpenGraph, Twitter Cards, JSON-LD schema, XML sitemap, and Search Console integration in one plugin
+- [ ] Add image alt text and captions to key photos in Media Library
 
 ### Performance
-- [ ] Verify native lazy loading is working on all theme images (`loading="lazy"`)
 - [ ] Install Imagify or ShortPixel for WebP image conversion and compression
+
+---
+
+## Performance & SEO Sprint — Lighthouse 100 Target
+
+*Findings from a full code audit (2026-05-13). Ordered by impact. Goal: 100 on Lighthouse Performance + strong search visibility. No new features — pure optimization.*
+
+---
+
+### Tier 1 — Core Web Vitals (Do These First)
+
+- [ ] **Convert hero from CSS background-image to `<img>` tag** — biggest single LCP win. Current `background-image` approach means the browser can't prioritize it, Google Images can't index it, and `loading="eager"` / `fetchpriority="high"` can't be applied. Switch to a real `<img>` with `loading="eager"` and `fetchpriority="high"`. Add `<link rel="preload" as="image">` in `wp_head` for the front page only. Also enables responsive `srcset` so phones stop downloading a 2560px image. *(front-page.php, functions.php)*
+
+- [ ] **Fix N+1 EXIF meta queries** — masonry gallery page fires 150+ extra DB queries per load (5× `get_post_meta()` per post, 30 posts). Same pattern in `widgets.php`, `blocks.php`, and `archive-portfolio.php`. Fix: call `get_post_meta($id)` once with no key (returns all meta as an array), then read individual keys from that array. Zero extra queries. *(inc/widgets.php, inc/blocks.php, archive-portfolio.php, page-templates/masonry-gallery.php)*
+
+- [ ] **Transient caching on all five widgets** — every widget re-queries the database on every page load. Camera Stats widget fires 7 raw `$wpdb` queries each time; Location Map fetches up to 500 attachments. Wrap each widget's `widget()` output in `get_transient()` / `set_transient()` with a 12–24 hr TTL. Clear cache on `save_post` and `delete_post` hooks. *(inc/widgets.php)*
+
+- [ ] **Self-host Google Fonts** — Google Fonts is render-blocking CSS loaded from an external CDN (DNS lookup + connection + TLS on every visit). Download the WOFF2 files for Lato, Poppins, and Rajdhani, serve locally with `@font-face`, add `font-display: swap`. Removes a render-blocking external request entirely. *(functions.php, style.css)*
+
+- [ ] **Conditional enqueue for GLightbox and Leaflet** — both libraries load on every page (single posts, shop, 404) even when there's no lightbox or map present. GLightbox: only enqueue when a page contains `.glightbox` elements (set a flag in templates that use it). Leaflet: only enqueue when the Location Map widget is active in the current sidebar. *(functions.php)*
+
+- [ ] **Add `loading="lazy"` to all below-fold images** — none of the masonry grids, widget thumbnails, or archive images have explicit lazy loading. Add `add_theme_support('lazy-load-images')` in `functions.php`. For images confirmed above the fold (hero, first post thumbnail on journal), explicitly pass `array('loading' => 'eager')` to override. *(functions.php, all templates)*
+
+- [ ] **Add explicit width/height to all post thumbnails** — missing dimensions cause CLS (layout shift) as images load. WordPress 5.5+ outputs these automatically if you use registered size names in `the_post_thumbnail()` — verify this is working. For the hero `<img>` (once converted), hardcode `width="1920" height="1080"`. *(all templates)*
+
+- [ ] **Fix `orderby=rand` in Random Category Widget** — `ORDER BY RAND()` forces a full table scan and bypasses MySQL query cache; gets slower as post count grows. Alternative: fetch a wider set ordered by ID and shuffle in PHP, or use a random `OFFSET` calculated from total count. *(inc/widgets.php)*
+
+---
+
+### Tier 2 — SEO Fundamentals
+
+- [ ] **Install Rank Math SEO (free)** — single plugin covers: meta descriptions, OpenGraph, Twitter Cards, JSON-LD schema (Article, ImageObject, BreadcrumbList, WebSite, Person), XML sitemap, Google Search Console integration. Gets the most impactful SEO items done without writing the meta tag code manually. *(plugin)*
+
+- [ ] **Verify XML sitemap is active** — WordPress 5.5+ auto-generates `/wp-sitemap.xml` covering posts, pages, and custom post types. Confirm it works, then submit to Google Search Console.
+
+- [ ] **Add JSON-LD schema markup in theme** (if not using Rank Math, or to supplement it):
+  - `WebSite` schema on every page (enables Google Sitelinks Search Box)
+  - `Person` / `ProfilePage` schema (photographer name, bio, social links)
+  - `Article` schema on blog posts (headline, datePublished, dateModified, author, image)
+  - `ImageObject` schema on single portfolio items (contentUrl, description, author, camera EXIF)
+  - `BreadcrumbList` on category archives and single posts
+
+- [ ] **Add `<time datetime="...">` to all post dates** — dates are currently plain text strings; `<time datetime="2026-05-13">` makes them machine-readable for schema parsers and screen readers. Replace `get_the_date()` with `<time datetime="<?php echo get_the_date('c'); ?>"><?php echo get_the_date(); ?></time>`. *(single.php, template-parts/content.php)*
+
+---
+
+### Tier 3 — Asset Delivery & Rendering
+
+- [ ] **Self-host Leaflet and GLightbox** — currently loaded from `unpkg.com` and `jsdelivr.net` respectively. Download both libraries into `/js/vendor/` and `/css/vendor/` and enqueue from the theme. Removes two external CDN connections, improves reliability, and puts all assets under your browser cache headers. *(functions.php)*
+
+- [ ] **Guard the hero-count WP_Query in Customizer** — `folkphotography_customizer()` runs a `WP_Query` to count hero images on every page load, not just when the Customizer is open. Wrap it in `if ( is_customize_preview() )` so it only fires when actually needed. *(functions.php)*
+
+- [ ] **Add `<link rel="preload">` hint for hero image** — even after converting the hero to an `<img>`, the browser discovers it after parsing the full HTML. Output a preload link for the hero image URL via `wp_head` on the front page only. Starts the image fetch at the earliest possible moment. *(functions.php)*
+
+- [ ] **Add `decoding="async"` to non-hero images** — tells the browser to decode images off the main thread, allowing rendering to continue without blocking. Add to all `the_post_thumbnail()` calls that aren't the LCP image: `array('decoding' => 'async', 'loading' => 'lazy')`. *(all templates)*
+
+- [ ] **Hero responsive srcset** — once converted to `<img>`, the hero always serves the 2560px `hero-fullscreen` image even on mobile. Set up `srcset` with `hero-fullscreen` (2560px) and `hero-desktop` (1920px), and a `sizes` attribute so the browser picks the appropriate size. *(front-page.php)*
+
+- [ ] **Optimize Camera Stats widget: 7 queries → 1–2** — the widget runs 7 separate `$wpdb->get_var()` calls for camera, lens, ISO, aperture, and location stats. These can be reduced to 1–2 queries using `GROUP BY` and `ORDER BY COUNT(*) DESC LIMIT 1` patterns in a single pass. *(inc/widgets.php)*
+
+- [ ] **Location Map Widget: meta_query pre-filter** — the widget fetches up to 500 attachment IDs then loops calling `get_post_meta()` per image to check for GPS coordinates. Move the GPS filter into the `WP_Query` itself using `meta_query` so only attachments that actually have lat/lng are returned. *(inc/widgets.php)*
+
+---
+
+### Tier 4 — HTML Quality & Small Best Practice
+
+- [ ] **Fix `h3` → `h2` in masonry overlay titles** — `archive-portfolio.php` uses `<h3 class="masonry-title">` directly under `<article>`, skipping h2. Heading hierarchy should be h1 (page title) → h2 (item title). *(archive-portfolio.php line 94)*
+
+- [ ] **Improve 404.php** — current 404 just says "Nothing Found" with no navigation. Add a search form (`get_search_form()`), links to Portfolio and Journal, and 4–5 category links. Reduces bounce rate and keeps users on the site. *(404.php)*
+
+- [ ] **Replace `_e()` with `esc_html_e()`** — a few places in `index.php` and `single.php` use `_e()` for output. WordPress coding standards require the escaped version. No XSS risk on translation strings, but it's flagged by code audits and PHPCS. *(index.php, single.php)*
+
+- [ ] **Cache `get_post_thumbnail_id()` in loops** — `masonry-gallery.php` calls `get_post_thumbnail_id()` multiple times per iteration. Assign to a `$thumb_id` variable once per loop pass and reuse it. *(page-templates/masonry-gallery.php)*
+
+- [ ] **Footer copyright year: use `date('Y')` instead of hardcoded year** — minor but becomes incorrect automatically. *(footer.php)*
+
+- [ ] **Add `rel="noopener noreferrer"` to any external links** — prevents opened tabs from accessing `window.opener`, minor security best practice.
 
 ---
 
