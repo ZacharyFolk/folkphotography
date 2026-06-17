@@ -19,8 +19,8 @@ while ( have_posts() ) :
     $tags     = get_the_terms( $post_id, 'portfolio_tag' );
 
     // EXIF from featured image
-    $make     = $thumb_id ? get_post_meta( $thumb_id, '_iwh_make',          true ) : '';
-    $model    = $thumb_id ? get_post_meta( $thumb_id, '_iwh_model',         true ) : '';
+    $make     = $thumb_id ? get_post_meta( $thumb_id, '_iwh_camera_make',   true ) : '';
+    $model    = $thumb_id ? get_post_meta( $thumb_id, '_iwh_camera_model',  true ) : '';
     $lens     = $thumb_id ? get_post_meta( $thumb_id, '_iwh_lens',          true ) : '';
     $focal    = $thumb_id ? get_post_meta( $thumb_id, '_iwh_focal_length',  true ) : '';
     $aperture = $thumb_id ? get_post_meta( $thumb_id, '_iwh_aperture',      true ) : '';
