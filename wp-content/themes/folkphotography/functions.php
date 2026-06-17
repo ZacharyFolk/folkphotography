@@ -272,7 +272,7 @@ function folkphotography_hero_attachment_field( $form_fields, $post ) {
         'input' => 'html',
         'html'  => '<label style="display:flex;align-items:center;gap:6px;">'
                  . '<input type="checkbox" name="attachments[' . $post->ID . '][folk_hero]" value="1"' . checked( $checked, true, false ) . '>'
-                 . __( 'Use in homepage hero rotation', 'folkphotography' )
+                 . esc_html__( 'Use in homepage hero rotation', 'folkphotography' )
                  . '</label>',
         'helps' => '',
     );

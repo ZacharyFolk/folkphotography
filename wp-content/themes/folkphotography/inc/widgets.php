@@ -64,19 +64,19 @@ class FolkPhoto_Recent_Portfolio_Widget extends WP_Widget
         $columns = !empty($instance['columns']) ? absint($instance['columns']) : 3;
         ?>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php _e('Title:', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php esc_html_e( 'Title:', 'folkphotography' ); ?></label>
             <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text"
                 value="<?php echo esc_attr($title); ?>">
         </p>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('number')); ?>"><?php _e('Number of items:', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('number')); ?>"><?php esc_html_e( 'Number of items:', 'folkphotography' ); ?></label>
             <input class="tiny-text" id="<?php echo esc_attr($this->get_field_id('number')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('number')); ?>" type="number" step="1" min="1"
                 value="<?php echo esc_attr($number); ?>" size="3">
         </p>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('columns')); ?>"><?php _e('Columns:', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('columns')); ?>"><?php esc_html_e( 'Columns:', 'folkphotography' ); ?></label>
             <select id="<?php echo esc_attr($this->get_field_id('columns')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('columns')); ?>">
                 <option value="2" <?php selected($columns, 2); ?>>2</option>
@@ -168,16 +168,16 @@ class FolkPhoto_Category_Gallery_Widget extends WP_Widget
         $categories = get_categories(array('hide_empty' => false));
         ?>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php _e('Title:', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php esc_html_e( 'Title:', 'folkphotography' ); ?></label>
             <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text"
                 value="<?php echo esc_attr($title); ?>">
         </p>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('category')); ?>"><?php _e('Category:', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('category')); ?>"><?php esc_html_e( 'Category:', 'folkphotography' ); ?></label>
             <select class="widefat" id="<?php echo esc_attr($this->get_field_id('category')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('category')); ?>">
-                <option value="0"><?php _e('Select Category', 'folkphotography'); ?></option>
+                <option value="0"><?php esc_html_e( 'Select Category', 'folkphotography' ); ?></option>
                 <?php foreach ($categories as $cat) : ?>
                     <option value="<?php echo esc_attr($cat->term_id); ?>" <?php selected($category, $cat->term_id); ?>>
                         <?php echo esc_html($cat->name); ?>
@@ -186,13 +186,13 @@ class FolkPhoto_Category_Gallery_Widget extends WP_Widget
             </select>
         </p>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('number')); ?>"><?php _e('Number of images:', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('number')); ?>"><?php esc_html_e( 'Number of images:', 'folkphotography' ); ?></label>
             <input class="tiny-text" id="<?php echo esc_attr($this->get_field_id('number')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('number')); ?>" type="number" step="1" min="1"
                 value="<?php echo esc_attr($number); ?>" size="3">
         </p>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('columns')); ?>"><?php _e('Columns:', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('columns')); ?>"><?php esc_html_e( 'Columns:', 'folkphotography' ); ?></label>
             <select id="<?php echo esc_attr($this->get_field_id('columns')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('columns')); ?>">
                 <option value="2" <?php selected($columns, 2); ?>>2</option>
@@ -396,22 +396,22 @@ class FolkPhoto_Location_Map_Widget extends WP_Widget
         $categories = get_categories(array('hide_empty' => false));
         ?>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php _e('Title:', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php esc_html_e( 'Title:', 'folkphotography' ); ?></label>
             <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text"
                 value="<?php echo esc_attr($title); ?>">
         </p>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('height')); ?>"><?php _e('Map Height (px):', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('height')); ?>"><?php esc_html_e( 'Map Height (px):', 'folkphotography' ); ?></label>
             <input class="small-text" id="<?php echo esc_attr($this->get_field_id('height')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('height')); ?>" type="number" step="50" min="300"
                 value="<?php echo esc_attr($height); ?>">
         </p>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('category')); ?>"><?php _e('Filter by Category (optional):', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('category')); ?>"><?php esc_html_e( 'Filter by Category (optional):', 'folkphotography' ); ?></label>
             <select class="widefat" id="<?php echo esc_attr($this->get_field_id('category')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('category')); ?>">
-                <option value="0"><?php _e('All Categories', 'folkphotography'); ?></option>
+                <option value="0"><?php esc_html_e( 'All Categories', 'folkphotography' ); ?></option>
                 <?php foreach ($categories as $cat) : ?>
                     <option value="<?php echo esc_attr($cat->term_id); ?>" <?php selected($category, $cat->term_id); ?>>
                         <?php echo esc_html($cat->name); ?>
@@ -510,7 +510,7 @@ class FolkPhoto_Camera_Stats_Widget extends WP_Widget
             </div>
             <?php
         else:
-            echo '<p>' . __('No camera data available yet. Upload photos with EXIF data!', 'folkphotography') . '</p>';
+            echo '<p>' . esc_html__( 'No camera data available yet. Upload photos with EXIF data!', 'folkphotography' ) . '</p>';
         endif;
 
         echo $args['after_widget'];
@@ -612,13 +612,13 @@ class FolkPhoto_Camera_Stats_Widget extends WP_Widget
         $title = !empty($instance['title']) ? $instance['title'] : __('By The Numbers', 'folkphotography');
         ?>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php _e('Title:', 'folkphotography'); ?></label>
+            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php esc_html_e( 'Title:', 'folkphotography' ); ?></label>
             <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>"
                 name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text"
                 value="<?php echo esc_attr($title); ?>">
         </p>
         <p class="description">
-            <?php _e('This widget automatically displays statistics from your photo EXIF data. No configuration needed!', 'folkphotography'); ?>
+            <?php esc_html_e( 'This widget automatically displays statistics from your photo EXIF data. No configuration needed!', 'folkphotography' ); ?>
         </p>
         <?php
     }

@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) exit;
 add_action('add_meta_boxes', function () {
     add_meta_box(
         'iwh-location-meta-box',
-        'I Was Here Location',
+        __( 'I Was Here Location', 'i-was-here' ),
         'iwh_location_meta_box_callback',
         'attachment',
         'side',
@@ -34,50 +34,49 @@ function iwh_location_meta_box_callback($post)
     $date_taken = get_post_meta($post->ID, '_iwh_date_taken', true);
 ?>
 
-<!-- Camera Data Section -->
 <?php if ($iso || $aperture || $shutter_speed || $focal_length): ?>
 <div style="background: #f0f0f1; padding: 10px; margin-bottom: 15px; border-radius: 3px;">
-    <h4 style="margin-top: 0;">Camera Settings</h4>
+    <h4 style="margin-top: 0;"><?php esc_html_e( 'Camera Settings', 'i-was-here' ); ?></h4>
     <table style="width: 100%; font-size: 12px;">
         <?php if ($camera_make || $camera_model): ?>
         <tr>
-            <td style="padding: 3px 0;"><strong>Camera:</strong></td>
+            <td style="padding: 3px 0;"><strong><?php esc_html_e( 'Camera:', 'i-was-here' ); ?></strong></td>
             <td><?php echo esc_html(trim($camera_make . ' ' . $camera_model)); ?></td>
         </tr>
         <?php endif; ?>
         <?php if ($lens): ?>
         <tr>
-            <td style="padding: 3px 0;"><strong>Lens:</strong></td>
+            <td style="padding: 3px 0;"><strong><?php esc_html_e( 'Lens:', 'i-was-here' ); ?></strong></td>
             <td><?php echo esc_html($lens); ?></td>
         </tr>
         <?php endif; ?>
         <?php if ($iso): ?>
         <tr>
-            <td style="padding: 3px 0; width: 35%;"><strong>ISO:</strong></td>
+            <td style="padding: 3px 0; width: 35%;"><strong><?php esc_html_e( 'ISO:', 'i-was-here' ); ?></strong></td>
             <td><?php echo esc_html($iso); ?></td>
         </tr>
         <?php endif; ?>
         <?php if ($aperture): ?>
         <tr>
-            <td style="padding: 3px 0;"><strong>Aperture:</strong></td>
+            <td style="padding: 3px 0;"><strong><?php esc_html_e( 'Aperture:', 'i-was-here' ); ?></strong></td>
             <td>ƒ/<?php echo esc_html($aperture); ?></td>
         </tr>
         <?php endif; ?>
         <?php if ($shutter_speed): ?>
         <tr>
-            <td style="padding: 3px 0;"><strong>Shutter Speed:</strong></td>
+            <td style="padding: 3px 0;"><strong><?php esc_html_e( 'Shutter Speed:', 'i-was-here' ); ?></strong></td>
             <td><?php echo esc_html($shutter_speed); ?>s</td>
         </tr>
         <?php endif; ?>
         <?php if ($focal_length): ?>
         <tr>
-            <td style="padding: 3px 0;"><strong>Focal Length:</strong></td>
+            <td style="padding: 3px 0;"><strong><?php esc_html_e( 'Focal Length:', 'i-was-here' ); ?></strong></td>
             <td><?php echo esc_html($focal_length); ?>mm</td>
         </tr>
         <?php endif; ?>
         <?php if ($date_taken): ?>
         <tr>
-            <td style="padding: 3px 0;"><strong>Date Taken:</strong></td>
+            <td style="padding: 3px 0;"><strong><?php esc_html_e( 'Date Taken:', 'i-was-here' ); ?></strong></td>
             <td><?php echo esc_html($date_taken); ?></td>
         </tr>
         <?php endif; ?>
@@ -85,21 +84,20 @@ function iwh_location_meta_box_callback($post)
 </div>
 <?php endif; ?>
 
-<!-- Location Section -->
-<h4>Location</h4>
-<label for="iwh-location-search">Search location:</label>
-<input type="text" id="iwh-location-search" placeholder="Enter city or place" style="width:100%" />
-<button type="button" id="iwh-search-button" class="button">Search</button>
+<h4><?php esc_html_e( 'Location', 'i-was-here' ); ?></h4>
+<label for="iwh-location-search"><?php esc_html_e( 'Search location:', 'i-was-here' ); ?></label>
+<input type="text" id="iwh-location-search" placeholder="<?php echo esc_attr__( 'Enter city or place', 'i-was-here' ); ?>" style="width:100%" />
+<button type="button" id="iwh-search-button" class="button"><?php esc_html_e( 'Search', 'i-was-here' ); ?></button>
 
 <div id="iwh-map" style="height:250px; margin-top:10px;"></div>
 
-<label for="iwh-lat">Latitude:</label>
+<label for="iwh-lat"><?php esc_html_e( 'Latitude:', 'i-was-here' ); ?></label>
 <input type="text" id="iwh-lat" name="_iwh_lat" value="<?php echo esc_attr($lat); ?>" style="width:100%" />
 
-<label for="iwh-lng">Longitude:</label>
+<label for="iwh-lng"><?php esc_html_e( 'Longitude:', 'i-was-here' ); ?></label>
 <input type="text" id="iwh-lng" name="_iwh_lng" value="<?php echo esc_attr($lng); ?>" style="width:100%" />
 
-<label for="iwh-place-name">Place Name (optional):</label>
+<label for="iwh-place-name"><?php esc_html_e( 'Place Name (optional):', 'i-was-here' ); ?></label>
 <input type="text" id="iwh-place-name" name="_iwh_place_name" value="<?php echo esc_attr($place_name); ?>"
     style="width:100%" />
 <?php

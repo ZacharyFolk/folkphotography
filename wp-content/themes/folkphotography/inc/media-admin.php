@@ -85,7 +85,7 @@ add_action( 'manage_media_custom_column', function ( $column_name, $attachment_i
             $parts[] = '<span class="folk-overflow">…and more</span>';
         }
     } else {
-        $parts[] = '<span class="folk-no-post">' . __( 'No post', 'folkphotography' ) . '</span>';
+        $parts[] = '<span class="folk-no-post">' . esc_html__( 'No post', 'folkphotography' ) . '</span>';
     }
 
     echo implode( '', $parts );
@@ -312,9 +312,9 @@ add_action( 'admin_notices', function () {
             $created
         );
         $msg .= ' <a href="' . esc_url( admin_url( 'edit.php?post_status=draft' ) ) . '">'
-              . __( 'Edit Drafts &rarr;', 'folkphotography' ) . '</a>';
+              . esc_html__( 'Edit Drafts →', 'folkphotography' ) . '</a>';
     } else {
-        $msg = __( 'No posts created.', 'folkphotography' );
+        $msg = esc_html__( 'No posts created.', 'folkphotography' );
     }
 
     if ( $skipped > 0 ) {

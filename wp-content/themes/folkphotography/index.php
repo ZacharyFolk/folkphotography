@@ -54,15 +54,15 @@
             <?php
             the_posts_pagination(array(
                 'mid_size' => 2,
-                'prev_text' => __('&larr; Previous', 'folkphotography'),
-                'next_text' => __('Next &rarr;', 'folkphotography'),
+                'prev_text' => esc_html__( '← Previous', 'folkphotography' ),
+                'next_text' => esc_html__( 'Next →', 'folkphotography' ),
             ));
             ?>
 
         <?php else : ?>
             <div class="no-results">
-                <h1><?php _e('Nothing Found', 'folkphotography'); ?></h1>
-                <p><?php _e('It seems we can&rsquo;t find what you&rsquo;re looking for.', 'folkphotography'); ?></p>
+                <h1><?php esc_html_e( 'Nothing Found', 'folkphotography' ); ?></h1>
+                <p><?php esc_html_e( 'It seems we can’t find what you’re looking for.', 'folkphotography' ); ?></p>
             </div>
         <?php endif; ?>
     </div>

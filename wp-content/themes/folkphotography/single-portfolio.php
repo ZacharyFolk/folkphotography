@@ -26,7 +26,7 @@ while ( have_posts() ) :
     $aperture = $thumb_id ? get_post_meta( $thumb_id, '_iwh_aperture',      true ) : '';
     $shutter  = $thumb_id ? get_post_meta( $thumb_id, '_iwh_shutter_speed', true ) : '';
     $iso      = $thumb_id ? get_post_meta( $thumb_id, '_iwh_iso',           true ) : '';
-    $location = $thumb_id ? get_post_meta( $thumb_id, '_iwh_location_name', true ) : '';
+    $location = $thumb_id ? get_post_meta( $thumb_id, '_iwh_place_name',    true ) : '';
     $camera   = trim( $make . ' ' . $model );
 
     // Media library fallbacks — used when the post itself has no content/excerpt

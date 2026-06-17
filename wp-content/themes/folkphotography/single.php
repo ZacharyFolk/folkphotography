@@ -54,8 +54,8 @@
             <?php
             // Post navigation
             the_post_navigation(array(
-                'prev_text' => '<span class="nav-subtitle">' . __('Previous:', 'folkphotography') . '</span> <span class="nav-title">%title</span>',
-                'next_text' => '<span class="nav-subtitle">' . __('Next:', 'folkphotography') . '</span> <span class="nav-title">%title</span>',
+                'prev_text' => '<span class="nav-subtitle">' . esc_html__( 'Previous:', 'folkphotography' ) . '</span> <span class="nav-title">%title</span>',
+                'next_text' => '<span class="nav-subtitle">' . esc_html__( 'Next:', 'folkphotography' ) . '</span> <span class="nav-title">%title</span>',
             ));
 
             // Comments

@@ -22,7 +22,7 @@ get_header();
 
             <?php
             // Get category from URL parameter or show all
-            $category_id = isset($_GET['cat']) ? absint($_GET['cat']) : 0;
+            $cat_slug = isset($_GET['cat']) ? sanitize_title( wp_unslash( $_GET['cat'] ) ) : '';
             
             // Get portfolio type from URL parameter
             $portfolio_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'all';
@@ -43,35 +43,39 @@ get_header();
                 $query_args['post_type'] = array('post', 'portfolio');
             }
             
-            // Add category filter if specified
-            // Use tax_query to support both 'category' (posts) and 'portfolio_category' (portfolio)
-            if ($category_id) {
-                if ($portfolio_type === 'portfolio') {
-                    // Portfolio only: use portfolio_category
+            // Add category filter if specified.
+            // Use slug-based lookup so each taxonomy resolves its own term ID independently.
+            if ( $cat_slug ) {
+                if ( $portfolio_type === 'portfolio' ) {
                     $query_args['tax_query'] = array(
                         array(
                             'taxonomy' => 'portfolio_category',
-                            'field' => 'term_id',
-                            'terms' => $category_id,
+                            'field'    => 'slug',
+                            'terms'    => $cat_slug,
                         )
                     );
-                } elseif ($portfolio_type === 'posts') {
-                    // Posts only: use category
-                    $query_args['cat'] = $category_id;
+                } elseif ( $portfolio_type === 'posts' ) {
+                    $query_args['tax_query'] = array(
+                        array(
+                            'taxonomy' => 'category',
+                            'field'    => 'slug',
+                            'terms'    => $cat_slug,
+                        )
+                    );
                 } else {
-                    // Mixed view: use OR relation to match either taxonomy
+                    // Mixed: OR across both taxonomies, each resolved by slug in its own namespace.
                     $query_args['tax_query'] = array(
                         'relation' => 'OR',
                         array(
                             'taxonomy' => 'category',
-                            'field' => 'term_id',
-                            'terms' => $category_id,
+                            'field'    => 'slug',
+                            'terms'    => $cat_slug,
                         ),
                         array(
                             'taxonomy' => 'portfolio_category',
-                            'field' => 'term_id',
-                            'terms' => $category_id,
-                        )
+                            'field'    => 'slug',
+                            'terms'    => $cat_slug,
+                        ),
                     );
                 }
             }
@@ -144,12 +148,12 @@ get_header();
                 <div class="filter-group">
                     <label><?php esc_html_e( 'Category:', 'folkphotography' ); ?></label>
                     <a href="<?php echo esc_url(remove_query_arg('cat')); ?>"
-                       class="filter-btn <?php echo ($category_id === 0) ? 'active' : ''; ?>">
+                       class="filter-btn <?php echo ( $cat_slug === '' ) ? 'active' : ''; ?>">
                         <?php esc_html_e( 'All', 'folkphotography' ); ?>
                     </a>
                     <?php foreach ($filter_terms as $term) : ?>
-                        <a href="<?php echo esc_url(add_query_arg('cat', $term->term_id)); ?>" 
-                           class="filter-btn <?php echo ($category_id === $term->term_id) ? 'active' : ''; ?>">
+                        <a href="<?php echo esc_url(add_query_arg('cat', $term->slug)); ?>"
+                           class="filter-btn <?php echo ( $cat_slug === $term->slug ) ? 'active' : ''; ?>">
                             <?php echo esc_html($term->name); ?>
                         </a>
                     <?php endforeach; ?>
@@ -180,11 +184,13 @@ get_header();
                                     <?php endif; ?>
                                     <?php
                                     // Show EXIF data if available
-                                    $camera = get_post_meta(get_post_thumbnail_id(), '_iwh_camera_model', true);
-                                    $lens = get_post_meta(get_post_thumbnail_id(), '_iwh_lens', true);
-                                    $aperture = get_post_meta(get_post_thumbnail_id(), '_iwh_aperture', true);
-                                    $shutter = get_post_meta(get_post_thumbnail_id(), '_iwh_shutter_speed', true);
-                                    $iso = get_post_meta(get_post_thumbnail_id(), '_iwh_iso', true);
+                                    $thumb_id  = get_post_thumbnail_id();
+                                    $thumb_meta = $thumb_id ? get_post_meta( $thumb_id ) : array();
+                                    $camera  = $thumb_meta['_iwh_camera_model'][0]  ?? '';
+                                    $lens    = $thumb_meta['_iwh_lens'][0]           ?? '';
+                                    $aperture = $thumb_meta['_iwh_aperture'][0]      ?? '';
+                                    $shutter = $thumb_meta['_iwh_shutter_speed'][0]  ?? '';
+                                    $iso     = $thumb_meta['_iwh_iso'][0]            ?? '';
                                     
                                     if ($camera || $lens || $aperture) :
                                     ?>
@@ -218,7 +224,7 @@ get_header();
                 <?php wp_reset_postdata(); ?>
 
             <?php else : ?>
-                <p class="no-results"><?php _e('No images found. Try a different filter!', 'folkphotography'); ?></p>
+                <p class="no-results"><?php esc_html_e( 'No images found. Try a different filter!', 'folkphotography' ); ?></p>
             <?php endif; ?>
 
         <?php endwhile; ?>
