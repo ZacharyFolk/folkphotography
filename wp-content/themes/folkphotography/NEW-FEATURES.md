@@ -162,12 +162,14 @@ Each image tells a story from my photographic journey.
 You can create direct links to filtered views:
 
 ```
-yoursite.com/portfolio/                    # All items
-yoursite.com/portfolio/?type=portfolio     # Portfolio only
-yoursite.com/portfolio/?type=posts         # Blog posts only
-yoursite.com/portfolio/?cat=5              # Specific category
-yoursite.com/portfolio/?type=portfolio&cat=5  # Combo
+yoursite.com/your-gallery-page/                              # All items
+yoursite.com/your-gallery-page/?type=portfolio               # Portfolio only
+yoursite.com/your-gallery-page/?type=posts                   # Blog posts only
+yoursite.com/your-gallery-page/?cat=travel                   # By category slug
+yoursite.com/your-gallery-page/?type=portfolio&cat=travel    # Combo
 ```
+
+Note: `?cat=` takes a category **slug** (e.g. `travel`, `landscape`), not a numeric ID.
 
 ---
 

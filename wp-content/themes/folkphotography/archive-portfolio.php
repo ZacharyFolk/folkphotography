@@ -77,7 +77,9 @@ $portfolio_query = new WP_Query( $query_args );
                     $desc_class = 'glightbox-desc-pa-' . $post_id;
                     $cat_terms  = get_the_terms( $post_id, 'portfolio_category' );
 
-                    $model    = get_post_meta( $thumb_id, '_iwh_model', true );
+                    $make     = get_post_meta( $thumb_id, '_iwh_camera_make',  true );
+                    $model    = get_post_meta( $thumb_id, '_iwh_camera_model', true );
+                    $model    = trim( $make . ' ' . $model );
                     $lens     = get_post_meta( $thumb_id, '_iwh_lens', true );
                     $aperture = get_post_meta( $thumb_id, '_iwh_aperture', true );
                     $shutter  = get_post_meta( $thumb_id, '_iwh_shutter_speed', true );

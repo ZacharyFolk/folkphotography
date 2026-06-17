@@ -104,7 +104,8 @@ function folkphotography_render_masonry_gallery_block( $attributes ) {
         $output .= '</a>';
 
         // Hidden lightbox description — EXIF + permalink
-        $camera  = get_post_meta( $thumb_id, '_iwh_model', true );
+        $make    = get_post_meta( $thumb_id, '_iwh_camera_make',  true );
+        $camera  = trim( $make . ' ' . get_post_meta( $thumb_id, '_iwh_camera_model', true ) );
         $lens    = get_post_meta( $thumb_id, '_iwh_lens', true );
         $ap      = get_post_meta( $thumb_id, '_iwh_aperture', true );
         $shutter = get_post_meta( $thumb_id, '_iwh_shutter_speed', true );
