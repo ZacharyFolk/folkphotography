@@ -1,5 +1,5 @@
 ```
-============================= [o] FOLK PHOTOGRAPHY [o] =======================================
+============================= [o] FOLK PHOTOGRAPHY [o] =============================
 
                                         ___
                                .==.____/[=]\ _______
@@ -9,11 +9,13 @@
                               ||     \\ \../ //    ||
                               \|      \\ __ //     |/
                                ---------------------
+
+====================================================================================
 ```
 
 # FolkPhotography
 
-A custom WordPress theme built for photography portfolios — dark, fast, and image-forward.
+A custom WordPress theme built for photography portfolios.
 
 Built and maintained by [Zachary Folk](https://folkphotography.com).
 
@@ -21,7 +23,7 @@ Built and maintained by [Zachary Folk](https://folkphotography.com).
 
 ## What This Is
 
-FolkPhotography is the WordPress theme for the website at the same domain. This domain has been around for about 30 years now and there have been dozens of themes and platforms that have run this. From all of those lessons and different things I have wanted from a theme I have built this one.
+FolkPhotography is the WordPress theme for the website at the same domain. This domain has been around for about 30 years now and there have been dozens of themes and platforms that have run it. From all of those lessons and different things I have wanted from a theme I have built this one.
 
 It combines a curated **Portfolio** section (custom post type, masonry archive, full-bleed single view) with a narrative **Journal** (standard blog with category filtering), a **print shop** via WooCommerce, and deep integration with the [i-was-here](https://github.com/ZacharyFolk/i-was-here) plugin for automatic EXIF and GPS extraction.
 

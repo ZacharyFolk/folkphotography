@@ -115,17 +115,17 @@ function folkphotography_scripts() {
         null
     );
 
-    // Leaflet (maps)
-    wp_enqueue_style( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
+    // Leaflet (maps) — only loaded when the I Was Here plugin is active
+    if ( defined( 'IWH_VERSION' ) ) {
+        wp_enqueue_style(  'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
+        wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',  array(), '1.9.4', true );
+    }
 
     // GLightbox
     wp_enqueue_style( 'glightbox', 'https://cdn.jsdelivr.net/npm/glightbox@3.2.0/dist/css/glightbox.min.css', array(), '3.2.0' );
 
     // Theme stylesheet
     wp_enqueue_style( 'folkphotography-style', get_stylesheet_uri(), array(), FOLKPHOTO_VERSION );
-
-    // Leaflet JS
-    wp_enqueue_script( 'leaflet',   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',                              array(),          '1.9.4',  true );
 
     // GLightbox JS
     wp_enqueue_script( 'glightbox', 'https://cdn.jsdelivr.net/npm/glightbox@3.2.0/dist/js/glightbox.min.js',        array(),          '3.2.0',  true );
@@ -485,6 +485,27 @@ function folkphotography_register_taxonomies() {
     ) );
 }
 add_action( 'init', 'folkphotography_register_taxonomies' );
+
+// =============================================================================
+// OPTIONAL PLUGIN NOTICE
+// =============================================================================
+
+add_action( 'admin_notices', function () {
+    if ( defined( 'IWH_VERSION' ) ) {
+        return;
+    }
+    $screen = get_current_screen();
+    if ( ! $screen || ! in_array( $screen->id, array( 'dashboard', 'themes', 'upload', 'edit-portfolio' ), true ) ) {
+        return;
+    }
+    echo '<div class="notice notice-info is-dismissible"><p>'
+        . wp_kses_post( sprintf(
+            /* translators: %s: URL to the I Was Here plugin */
+            __( '<strong>FolkPhotography:</strong> Install the <a href="%s">I Was Here plugin</a> to enable EXIF camera data, GPS coordinates, and location maps.', 'folkphotography' ),
+            'https://github.com/ZacFromOrient/i-was-here'
+        ) )
+        . '</p></div>';
+} );
 
 // =============================================================================
 // CUSTOM WIDGETS
