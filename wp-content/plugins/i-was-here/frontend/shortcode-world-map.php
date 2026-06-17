@@ -33,7 +33,8 @@ add_shortcode('iwh_world_map', function ($atts) {
             ],
             [
                 'key'     => '_iwh_lng',
-                'compare' => 'EXISTS',
+                'value'   => '',
+                'compare' => '!=',
             ],
         ],
     ]);
