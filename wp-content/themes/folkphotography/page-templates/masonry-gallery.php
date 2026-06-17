@@ -25,8 +25,10 @@ get_header();
             $cat_slug = isset($_GET['cat']) ? sanitize_title( wp_unslash( $_GET['cat'] ) ) : '';
             
             // Get portfolio type from URL parameter
-            $portfolio_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'all';
-            
+            $portfolio_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
+            if ( ! in_array( $portfolio_type, array( 'all', 'portfolio', 'posts' ), true ) ) {
+                $portfolio_type = 'all';
+            }
             // Build query args
             $query_args = array(
                 'posts_per_page' => 30,
