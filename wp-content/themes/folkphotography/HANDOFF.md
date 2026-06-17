@@ -30,7 +30,7 @@ Auto-extracts EXIF/GPS from uploaded images, stores as post meta (`_iwh_*` keys)
 - `admin/tools-page.php` — consolidated admin tools page under Tools menu
 - `admin/js/admin-map.js` — Leaflet + Nominatim geocoding (no API key required)
 - `frontend/shortcode-world-map.php` — `[iwh_world_map]` shortcode, Leaflet, single optimized query
-- Meta keys: `_iwh_lat`, `_iwh_lng`, `_iwh_location_name`, `_iwh_make`, `_iwh_model`, `_iwh_lens`, `_iwh_focal_length`, `_iwh_aperture`, `_iwh_shutter_speed`, `_iwh_iso`
+- Meta keys: `_iwh_lat`, `_iwh_lng`, `_iwh_place_name`, `_iwh_camera_make`, `_iwh_camera_model`, `_iwh_lens`, `_iwh_focal_length`, `_iwh_aperture`, `_iwh_shutter_speed`, `_iwh_iso`, `_iwh_date_taken`, `_iwh_has_exif`
 - Version management: bump plugin header `Version:` + `IWH_VERSION` constant + `CHANGELOG.md`
 
 ### Dev Environment
