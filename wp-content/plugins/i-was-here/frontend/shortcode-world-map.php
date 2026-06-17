@@ -28,11 +28,13 @@ add_shortcode('iwh_world_map', function ($atts) {
         'meta_query'     => [
             [
                 'key'     => '_iwh_lat',
-                'compare' => 'EXISTS',
+                'value'   => '',
+                'compare' => '!=',
             ],
             [
                 'key'     => '_iwh_lng',
-                'compare' => 'EXISTS',
+                'value'   => '',
+                'compare' => '!=',
             ],
         ],
     ]);
