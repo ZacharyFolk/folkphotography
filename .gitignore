@@ -29,6 +29,7 @@ wp-content/index.php
 wp-content/plugins/*
 !wp-content/plugins/wp-sync-db-master
 !wp-content/plugins/wp-sync-db-media-files-master
+!wp-content/plugins/i-was-here
 wp-cron.php
 wp-links-opml.php
 wp-login.php
@@ -36,7 +37,6 @@ wp-mail.php
 wp-settings.php
 wp-signup.php
 wp-trackback.php
-index.php
 !wp-content/themes/simplefolk/index.php
 wp-blog-header.php
 wp-load.php
@@ -72,3 +72,4 @@ wp-content/debug.log
 wp-content/maintenance.php
 wp-content/maintenance/
 wp-content/themes/simplefolk/assets/fancybox/
+.claude/
