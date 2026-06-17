@@ -5,6 +5,9 @@
         <?php
         while (have_posts()) :
             the_post();
+            $thumb_id    = get_post_thumbnail_id();
+            $att_desc    = $thumb_id ? trim( get_post_field( 'post_content', $thumb_id ) ) : '';
+            $use_att_desc = ! trim( get_the_content() ) && $att_desc;
         ?>
             <article id="post-<?php the_ID(); ?>" <?php post_class('post-content'); ?>>
                 <header class="entry-header">
@@ -32,7 +35,11 @@
                 <?php endif; ?>
 
                 <div class="entry-content">
-                    <?php the_content(); ?>
+                    <?php if ( $use_att_desc ) : ?>
+                        <?php echo wp_kses_post( wpautop( $att_desc ) ); ?>
+                    <?php else : ?>
+                        <?php the_content(); ?>
+                    <?php endif; ?>
                 </div>
 
                 <?php if (has_tag()) : ?>

@@ -29,6 +29,12 @@ while ( have_posts() ) :
     $location = $thumb_id ? get_post_meta( $thumb_id, '_iwh_location_name', true ) : '';
     $camera   = trim( $make . ' ' . $model );
 
+    // Media library fallbacks — used when the post itself has no content/excerpt
+    $att_caption     = $thumb_id ? trim( get_post_field( 'post_excerpt', $thumb_id ) ) : '';
+    $att_description = $thumb_id ? trim( get_post_field( 'post_content', $thumb_id ) ) : '';
+    $use_att_caption = ! has_excerpt() && $att_caption;
+    $use_att_desc    = ! trim( get_the_content() ) && $att_description;
+
     $has_exif = $camera || $lens || $aperture || $location;
 ?>
 
@@ -57,14 +63,22 @@ while ( have_posts() ) :
                 <?php endif; ?>
             </header>
 
-            <?php if ( has_excerpt() ) : ?>
+            <?php if ( has_excerpt() || $use_att_caption ) : ?>
                 <div class="portfolio-excerpt">
-                    <?php the_excerpt(); ?>
+                    <?php if ( has_excerpt() ) : ?>
+                        <?php the_excerpt(); ?>
+                    <?php else : ?>
+                        <p><?php echo esc_html( $att_caption ); ?></p>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
 
             <div class="entry-content portfolio-gallery">
-                <?php the_content(); ?>
+                <?php if ( $use_att_desc ) : ?>
+                    <?php echo wp_kses_post( wpautop( $att_description ) ); ?>
+                <?php else : ?>
+                    <?php the_content(); ?>
+                <?php endif; ?>
             </div>
 
             <?php if ( $has_exif ) : ?>
