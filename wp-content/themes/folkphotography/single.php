@@ -15,7 +15,7 @@
 
                     <div class="entry-meta">
                         <span class="posted-on">
-                            <?php echo get_the_date(); ?>
+                            <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date() ); ?></time>
                         </span>
                         <span class="byline">
                             <?php printf( esc_html__( 'by %s', 'folkphotography' ), esc_html( get_the_author() ) ); ?>
