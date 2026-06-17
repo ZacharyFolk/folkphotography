@@ -90,17 +90,18 @@ The theme uses CSS custom properties (variables) defined in `style.css`. You can
 
 The parallax effect speed can be adjusted in the theme customizer or by modifying the `data-parallax-speed` attribute in `front-page.php`.
 
-## Integration with I-Was-Here Plugin
+## Optional: I Was Here Plugin
 
-This theme is designed to work alongside the I-Was-Here plugin. The hero image fallback will automatically select images that have EXIF data if no category is specified.
+The theme works fully standalone. Install the **I Was Here** plugin to unlock:
 
-The plugin now extracts and displays:
-- Camera make and model
-- Lens information
-- ISO, Aperture, Shutter Speed
-- Focal Length
-- Date taken
-- GPS coordinates
+- EXIF camera data panels (camera, lens, aperture, shutter, ISO) on portfolio items
+- GPS coordinate extraction from photo metadata
+- Location map widget and `[iwh_world_map]` shortcode
+- Bulk EXIF rescan tool under **Tools > i-was-here**
+
+Without the plugin, all EXIF and map sections are automatically hidden — no broken layouts or errors.
+
+**Leaflet** (the map library) is not a theme dependency. It is only loaded on the front end when the I Was Here plugin is active. If the plugin is not installed, Leaflet is never enqueued.
 
 ## WooCommerce Integration
 
