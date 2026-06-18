@@ -1778,6 +1778,71 @@ body::before {
     color: var(--white-bright);
 }
 
+/* Portfolio Photo Meta Panel — description + EXIF two-column layout
+   ================================================== */
+.portfolio-photo-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2.5rem 0;
+    padding: 2rem;
+    background: var(--grey-darker);
+    border-radius: 4px;
+}
+
+.photo-description {
+    color: var(--white-dim);
+    font-size: 0.95rem;
+    line-height: 1.75;
+}
+
+.photo-description p:first-child { margin-top: 0; }
+.photo-description p:last-child  { margin-bottom: 0; }
+
+.photo-exif {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.25rem;
+    align-content: start;
+    margin: 0;
+    padding: 0;
+}
+
+.exif-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.exif-item dt {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--grey-medium);
+}
+
+.exif-item dd {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--white-bright);
+}
+
+/* When there's no description, let EXIF span the full panel width */
+.portfolio-photo-meta:not(:has(.photo-description)) {
+    grid-template-columns: 1fr;
+}
+
+.portfolio-photo-meta:not(:has(.photo-description)) .photo-exif {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+@media (max-width: 768px) {
+    .portfolio-photo-meta {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Tags footer */
 .portfolio-footer {
     border-top: 1px solid var(--grey-dark);
