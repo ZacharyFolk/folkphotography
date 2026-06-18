@@ -1,5 +1,82 @@
 # FolkPhotography Theme - Changelog
 
+## Version 1.3.0 - June 2026
+
+### ✨ New Feature
+
+**Portfolio Photo Meta Panel** (`single-portfolio.php`, `functions.php`, `style.css`)
+
+New per-post toggle and unified photo meta layout on single portfolio items. Previously the EXIF panel was a simple list at the bottom of the page; description and EXIF were mutually exclusive. Now:
+
+- **"Show photo description & camera data"** checkbox in the portfolio editor sidebar (side meta box). Defaults ON for all posts — unchecking hides the panel entirely.
+- When enabled, a responsive two-column panel renders below the featured image: **left column** shows the media library image description; **right column** shows an EXIF grid.
+- EXIF grid shows each value as a labelled cell (Camera, Lens, Focal Length, Aperture, Shutter, ISO, Date, Location). Each cell is only rendered if the data exists.
+- Shutter speed is formatted from the raw fraction string (e.g. `130/10` → `13s`, `1/250` → `1/250s`).
+- Date taken is formatted using the site's configured date format (`date_i18n`).
+- Post content stacks below the panel independently — adding written content no longer suppresses the description or EXIF.
+- Panel collapses to single column on mobile (≤768px). When no description is present, the EXIF grid spans the full width with auto-fill columns.
+- Meta key: `_folk_show_photo_meta` on the portfolio post. Empty/absent = ON (backward compatible with existing posts).
+
+---
+
+### 🔧 Code Quality & Standards (this session)
+
+**Escaped i18n throughout theme**
+
+All `__()` calls in HTML contexts and all `_e()` calls converted to their escaped equivalents (`esc_html__()`, `esc_html_e()`, `esc_attr__()`). HTML entities in strings (e.g. `&rarr;`, `&rsquo;`) converted to Unicode equivalents to survive escaping. Files affected: `index.php`, `404.php`, `template-parts/content.php`, `inc/widgets.php`, `inc/media-admin.php`.
+
+**IWH meta box strings internationalized** (`plugins/i-was-here/admin/meta-box-location.php`)
+
+All hard-coded English strings in the plugin meta box wrapped in `__()` / `esc_html_e()` / `esc_attr__()` with text domain `i-was-here`.
+
+---
+
+### 🐛 Bug Fixes (this session)
+
+**Wrong IWH meta keys throughout theme**
+
+Templates and widgets were reading `_iwh_make`, `_iwh_model`, `_iwh_location_name` — none of which exist. The plugin writes `_iwh_camera_make`, `_iwh_camera_model`, `_iwh_place_name`. Camera display was always empty as a result. Also fixed to combine make + model with `trim($make . ' ' . $model)`. Fixed in: `single-portfolio.php`, `archive-portfolio.php`, `inc/widgets.php`, `inc/blocks.php`.
+
+**Mixed-mode taxonomy filter using term IDs** (`page-templates/masonry-gallery.php`)
+
+The `?cat=` URL parameter was passing a term ID into an OR tax_query across two taxonomies (`category` + `portfolio_category`). Term IDs are scoped per taxonomy — the same ID number may refer to different terms. Fixed by switching to slug-based filtering throughout: URL param now carries the slug, and every tax_query branch uses `'field' => 'slug'`. Filter button links and active-state checks also updated to use slugs.
+
+**N+1 query in masonry gallery** (`page-templates/masonry-gallery.php`)
+
+Each loop iteration called `get_post_thumbnail_id()` then individual `get_post_meta()` calls per field. Replaced with a single `get_post_meta($thumb_id)` call per item (returns all meta), then plucking values from the array with `$thumb_meta['_iwh_camera_model'][0] ?? ''`.
+
+**Leaflet loaded unconditionally** (`functions.php`)
+
+Leaflet CSS and JS were enqueued on every page load even when the I Was Here plugin was not active and no maps would ever render. Wrapped in `if ( defined( 'IWH_VERSION' ) )`.
+
+---
+
+### ✨ I Was Here Plugin — Optional Dependency
+
+`functions.php` updated so the theme works fully standalone without the plugin:
+
+- Leaflet only loads when `IWH_VERSION` is defined (plugin active).
+- Admin notice shown on Dashboard, Themes, Upload, and Edit-Portfolio screens when plugin is not installed.
+- All EXIF reads in templates use `get_post_meta()` directly — no coupling to plugin classes.
+
+`README.md` updated to document this explicitly under "Optional: I Was Here Plugin".
+
+---
+
+### 🔧 EXIF Rescan Tool Rewrite (`plugins/i-was-here/admin/tools-page.php`)
+
+The original `handle_rescan()` loaded all image attachments in a single HTTP request — a guaranteed timeout on any library with more than ~200 images.
+
+Replaced with a batched AJAX approach:
+- `BATCH_SIZE = 20` images per request
+- Scan state (progress, total, offset, overwrite flag) persisted to `iwh_scan_state` WP option
+- Resume button appears if a previous scan was interrupted
+- Progress bar in the admin UI with live percentage
+- `count_scannable()` uses `WP_Query::found_posts` with `posts_per_page: 1` for efficient COUNT
+- Error handling per batch — a failed batch stops the scan and shows the error
+
+---
+
 ## Version 1.2.1 - May 2026
 
 ### ✨ New Templates
