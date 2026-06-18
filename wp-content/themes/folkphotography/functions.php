@@ -329,6 +329,63 @@ function folkphotography_get_hero_image() {
 }
 
 // =============================================================================
+// PORTFOLIO PHOTO META BOX
+// =============================================================================
+
+/**
+ * Register the "Photo Meta" meta box on portfolio posts.
+ *
+ * Controls whether the media library image description and EXIF panel render
+ * on the single-portfolio template. Defaults ON when the meta key is absent.
+ */
+function folkphotography_photo_meta_box() {
+    add_meta_box(
+        'folk-photo-meta',
+        __( 'Photo Meta', 'folkphotography' ),
+        'folkphotography_photo_meta_box_cb',
+        'portfolio',
+        'side',
+        'default'
+    );
+}
+add_action( 'add_meta_boxes', 'folkphotography_photo_meta_box' );
+
+function folkphotography_photo_meta_box_cb( $post ) {
+    wp_nonce_field( 'folk_photo_meta', 'folk_photo_meta_nonce' );
+    $show    = get_post_meta( $post->ID, '_folk_show_photo_meta', true );
+    $checked = ( $show === '' || $show === '1' );
+    echo '<label style="display:flex;align-items:center;gap:6px;">'
+       . '<input type="checkbox" name="folk_show_photo_meta" value="1"' . checked( $checked, true, false ) . '>'
+       . esc_html__( 'Show photo description & camera data', 'folkphotography' )
+       . '</label>';
+    echo '<p class="description" style="margin-top:8px;">'
+       . esc_html__( 'Displays the media library image description and EXIF data below the photo.', 'folkphotography' )
+       . '</p>';
+}
+
+/**
+ * Save the photo meta toggle when a portfolio post is saved.
+ *
+ * @param int $post_id
+ */
+function folkphotography_photo_meta_box_save( $post_id ) {
+    if ( ! isset( $_POST['folk_photo_meta_nonce'] ) ) {
+        return;
+    }
+    if ( ! wp_verify_nonce( $_POST['folk_photo_meta_nonce'], 'folk_photo_meta' ) ) {
+        return;
+    }
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
+    }
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+    update_post_meta( $post_id, '_folk_show_photo_meta', isset( $_POST['folk_show_photo_meta'] ) ? '1' : '0' );
+}
+add_action( 'save_post_portfolio', 'folkphotography_photo_meta_box_save' );
+
+// =============================================================================
 // BODY CLASSES
 // =============================================================================
 
